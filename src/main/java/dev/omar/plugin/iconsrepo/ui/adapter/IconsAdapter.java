@@ -1,5 +1,6 @@
 package dev.omar.plugin.iconsrepo.ui.adapter;
 
+import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.LayoutInflater;
@@ -8,18 +9,18 @@ import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.ListAdapter;
-
 import androidx.recyclerview.widget.RecyclerView;
-import dev.omar.plugin.iconsrepo.R;
-import dev.omar.plugin.iconsrepo.models.IconModel;
-import dev.omar.plugin.iconsrepo.utils.FastSearchIndex;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import dev.omar.plugin.iconsrepo.R;
+import dev.omar.plugin.iconsrepo.models.IconModel;
+import dev.omar.plugin.iconsrepo.utils.FastSearchIndex;
 
 public class IconsAdapter extends ListAdapter<IconModel, IconViewHolder> implements Filterable {
 
@@ -57,15 +58,16 @@ public class IconsAdapter extends ListAdapter<IconModel, IconViewHolder> impleme
         void onItemClicked(IconModel model, View view, int position);
     }
 
+    @NonNull
     @Override
-    public IconViewHolder onCreateViewHolder(ViewGroup parent, int id) {
+    public IconViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int id) {
         return new IconViewHolder(
                 LayoutInflater.from(parent.getContext()).inflate(R.layout.item_icon, parent, false),
                 this);
     }
 
     @Override
-    public void onBindViewHolder(IconViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull IconViewHolder holder, int position) {
         holder.bindView(getItem(position));
     }
 
@@ -95,6 +97,7 @@ public class IconsAdapter extends ListAdapter<IconModel, IconViewHolder> impleme
                 return results;
             }
 
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             protected void publishResults(CharSequence keyword, FilterResults results) {
                 @SuppressWarnings("unchecked")
@@ -104,6 +107,7 @@ public class IconsAdapter extends ListAdapter<IconModel, IconViewHolder> impleme
         };
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void search(String keyword) {
         if (pendingSearch != null) {
             mainHandler.removeCallbacks(pendingSearch);
@@ -122,7 +126,7 @@ public class IconsAdapter extends ListAdapter<IconModel, IconViewHolder> impleme
     }
 
     @Override
-    public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
+    public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onDetachedFromRecyclerView(recyclerView);
         searchExecutor.shutdown();
     }

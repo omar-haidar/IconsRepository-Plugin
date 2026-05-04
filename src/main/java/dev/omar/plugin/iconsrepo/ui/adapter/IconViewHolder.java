@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.collection.LruCache;
 import androidx.core.content.ContextCompat;
@@ -33,7 +34,7 @@ public class IconViewHolder extends RecyclerView.ViewHolder {
     private static final LruCache<String, Bitmap> iconsCache =
             new LruCache<String, Bitmap>(8 * 1024) {
                 @Override
-                protected int sizeOf(String keyword, Bitmap bitmap) {
+                protected int sizeOf(String keyword, @NonNull Bitmap bitmap) {
                     return bitmap.getByteCount() / 1024;
                 }
             };
@@ -50,7 +51,7 @@ public class IconViewHolder extends RecyclerView.ViewHolder {
         }
     }
 
-    public void bindView(final IconModel model) {
+    public void bindView(@NonNull final IconModel model) {
         currentModel = model;
 
         itemView.setOnClickListener(
