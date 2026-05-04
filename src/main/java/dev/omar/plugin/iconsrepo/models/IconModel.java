@@ -36,7 +36,7 @@ public class IconModel {
 
         IconModel other = (IconModel) obj;
 
-        if (iconName != null ? !iconName.equals(other.iconName) : other.iconName != null)
+        if (!Objects.equals(iconName, other.iconName))
             return false;
 
         return Objects.equals(svgIcon,other.svgIcon);

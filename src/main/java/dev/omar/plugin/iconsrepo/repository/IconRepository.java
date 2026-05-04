@@ -5,6 +5,8 @@ import android.content.res.AssetManager;
 
 import android.os.Handler;
 import android.os.Looper;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
 
 import com.caverock.androidsvg.SVG;
@@ -112,7 +114,8 @@ public class IconRepository {
         return icons;
     }
 
-    private String extractIconName(String path) {
+    @NonNull
+    private String extractIconName(@NonNull String path) {
         String fileName = path.substring(path.lastIndexOf('/') + 1);
         int dotIndex = fileName.lastIndexOf('.');
         if (dotIndex > 0) {
@@ -121,7 +124,8 @@ public class IconRepository {
         return fileName;
     }
 
-    private byte[] readEntryBytes(ZipInputStream zipIn) throws IOException {
+    @NonNull
+    private byte[] readEntryBytes(@NonNull ZipInputStream zipIn) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         byte[] buffer = new byte[4096];
         int len;
