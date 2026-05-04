@@ -25,6 +25,7 @@ import com.itsaky.androidide.plugins.base.PluginFragmentHelper;
 import com.itsaky.androidide.plugins.extensions.IModule;
 import com.itsaky.androidide.plugins.extensions.IProject;
 import com.itsaky.androidide.plugins.extensions.ModuleType;
+
 import dev.omar.plugin.iconsrepo.Main;
 import dev.omar.plugin.iconsrepo.R;
 import dev.omar.plugin.iconsrepo.data.validation.IconNameRule;
@@ -34,6 +35,7 @@ import dev.omar.plugin.iconsrepo.repository.IconRepository;
 import dev.omar.plugin.iconsrepo.ui.adapter.IconsAdapter;
 
 import dev.omar.plugin.iconsrepo.utils.ImageUtils;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.util.Arrays;
@@ -102,10 +104,12 @@ public class MainFragment extends PluginFragment {
 
                     @Override
                     public void beforeTextChanged(
-                            CharSequence arg0, int arg1, int arg2, int arg3) {}
+                            CharSequence arg0, int arg1, int arg2, int arg3) {
+                    }
 
                     @Override
-                    public void onTextChanged(CharSequence text, int arg1, int arg2, int arg3) {}
+                    public void onTextChanged(CharSequence text, int arg1, int arg2, int arg3) {
+                    }
 
                     @Override
                     public void afterTextChanged(Editable editable) {
@@ -134,21 +138,22 @@ public class MainFragment extends PluginFragment {
         final TextInputEditText inputPath = root.findViewById(R.id.inputPath);
 
         inputName.setText("ic_" + model.getIconName().replaceAll("-", "_"));
-
+        inputPath.setText("/sdcard/Download/");
         inputName.addTextChangedListener(
                 new TextWatcher() {
-
                     @Override
                     public void onTextChanged(CharSequence text, int arg1, int arg2, int arg3) {
-                        Validator.validate(inputName,Arrays.asList(new IconNameRule()));
+                        Validator.validate(inputName, Arrays.asList(new IconNameRule()));
                     }
 
                     @Override
                     public void beforeTextChanged(
-                            CharSequence arg0, int arg1, int arg2, int arg3) {}
+                            CharSequence arg0, int arg1, int arg2, int arg3) {
+                    }
 
                     @Override
-                    public void afterTextChanged(Editable arg0) {}
+                    public void afterTextChanged(Editable arg0) {
+                    }
                 });
 
         final MaterialAlertDialogBuilder dialog = new MaterialAlertDialogBuilder(getContext());
@@ -158,14 +163,13 @@ public class MainFragment extends PluginFragment {
         dialog.setPositiveButton("Import", null);
         dialog.setNegativeButton("Cancel", null);
         final AlertDialog alertDialog = dialog.show();
-        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v->{
-            boolean isValidName = Validator.validate(inputName,Arrays.asList(new IconNameRule()));
-            if(!isValidName){
-                
-            }else{
+        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+            boolean isValidName = Validator.validate(inputName, Arrays.asList(new IconNameRule()));
+
+            if (isValidName) {
                 alertDialog.dismiss();
             }
-            
+
         });
     }
 }
