@@ -11,7 +11,7 @@ pluginBuilder {
 android {
     namespace = "dev.omar.plugin.iconsrepo"
     compileSdk = 35
-
+    buildToolsVersion = "37.0.0"
     defaultConfig {
         applicationId = "dev.omar.plugin.iconsrepo"
         minSdk = 26
@@ -39,7 +39,7 @@ android {
     buildFeatures {
         viewBinding = true
     }
-    buildToolsVersion = "37.0.0"
+    
 
 
 }
