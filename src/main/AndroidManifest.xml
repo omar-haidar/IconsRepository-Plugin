@@ -13,7 +13,14 @@
         <meta-data
             android:name="plugin.name"
             android:value="IconsRepository-Plugin" />
+        
+        <meta-data
+            android:name="plugin.icon_day"
+            android:value="assets/icon_day.png" />
 
+        <meta-data
+            android:name="plugin.icon_night"
+            android:value="assets/icon_night.png" />
         <meta-data
             android:name="plugin.version"
             android:value="1.0.1" />
@@ -30,15 +37,7 @@
             android:name="plugin.min_ide_version"
             android:value="1.0.1" />
 
-        <!--
-            Available permissions (comma-separated):
-              - filesystem.read    : Read files from the filesystem
-              - filesystem.write   : Write files to the filesystem
-              - network.access     : Access the network
-              - system.commands    : Execute system commands
-              - ide.settings       : Access IDE settings
-              - project.structure  : Access project structure
-        -->
+        <!-- Available permissions (comma-separated): - filesystem.read : Read files from the filesystem - filesystem.write : Write files to the filesystem - network.access : Access the network - system.commands : Execute system commands - ide.settings : Access IDE settings - project.structure : Access project structure -->
         <meta-data
             android:name="plugin.permissions"
             android:value="filesystem.read,filesystem.write,project.structure" />
