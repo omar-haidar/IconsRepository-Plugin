@@ -16,6 +16,7 @@ import com.itsaky.androidide.plugins.extensions.EditorTabItem;
 import com.itsaky.androidide.plugins.extensions.FabAction;
 import com.itsaky.androidide.plugins.extensions.MenuItem;
 import com.itsaky.androidide.plugins.extensions.NavigationItem;
+import com.itsaky.androidide.plugins.extensions.ProjectType;
 import com.itsaky.androidide.plugins.extensions.TabItem;
 import com.itsaky.androidide.plugins.extensions.ToolbarAction;
 import com.itsaky.androidide.plugins.extensions.UIExtension;
@@ -27,6 +28,8 @@ public abstract class BasePlugin implements IPlugin, UIExtension, EditorTabExten
 
     private PluginContext context;
     private IdeProjectService projectService;
+    
+    
     @Override
     public boolean initialize(PluginContext context) {
         try {
@@ -35,6 +38,7 @@ public abstract class BasePlugin implements IPlugin, UIExtension, EditorTabExten
             if(projectService == null){
                 throw new NullPointerException("IdeProjectService not available!");
             }
+            
             onInitialized(context);
             return true;
         } catch (Exception err) {
