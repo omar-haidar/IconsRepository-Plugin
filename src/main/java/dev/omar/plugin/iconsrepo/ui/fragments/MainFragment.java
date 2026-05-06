@@ -7,71 +7,67 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
-import com.google.android.material.textview.MaterialTextView;
-
-import com.itsaky.androidide.plugins.base.PluginFragmentHelper;
 import com.itsaky.androidide.plugins.extensions.IModule;
 import com.itsaky.androidide.plugins.extensions.IProject;
 import com.itsaky.androidide.plugins.extensions.ModuleType;
+import com.itsaky.androidide.plugins.extensions.ProjectType;
+import com.itsaky.androidide.plugins.extensions.SourceSet;
+import com.itsaky.androidide.plugins.services.IdeProjectService;
 
 import dev.omar.plugin.iconsrepo.Main;
 import dev.omar.plugin.iconsrepo.R;
 import dev.omar.plugin.iconsrepo.data.validation.IconNameRule;
+import dev.omar.plugin.iconsrepo.data.validation.ValidationTextWatcher;
 import dev.omar.plugin.iconsrepo.data.validation.Validator;
+import dev.omar.plugin.iconsrepo.databinding.FragmentMainBinding;
 import dev.omar.plugin.iconsrepo.models.IconModel;
 import dev.omar.plugin.iconsrepo.repository.IconRepository;
 import dev.omar.plugin.iconsrepo.ui.adapter.IconsAdapter;
 
 import dev.omar.plugin.iconsrepo.utils.ImageUtils;
-
 import java.io.File;
-import java.io.FileWriter;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class MainFragment extends PluginFragment {
 
+    private FragmentMainBinding binding;
+
     @Override
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_main, container, false);
+        binding = FragmentMainBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
     @MainThread
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        setupRecyclerView();
 
-        final RecyclerView recyclerView = setupRecyclerView(view);
-
-        final ProgressBar progressBar = view.findViewById(R.id.loadingProgressBar);
-        final MaterialTextView txt = view.findViewById(R.id.emptyStateText);
-        final TextInputEditText edittext = view.findViewById(R.id.searchEditText);
-        final TextInputLayout edittextLayout = view.findViewById(R.id.searchInputLayout);
         final IconsAdapter adapter = new IconsAdapter();
         adapter.setOnItemClickListener(
                 (model, itemView, position) -> {
                     showImportIconDialog(model);
                 });
+        binding.searchEditText.addTextChangedListener(adapter);
+        binding.iconsRecyclerView.setAdapter(adapter);
 
-        recyclerView.setAdapter(adapter);
+        binding.loadingProgressBar.setVisibility(View.VISIBLE);
+        binding.iconsRecyclerView.setVisibility(View.GONE);
 
-        progressBar.setVisibility(View.VISIBLE);
-        recyclerView.setVisibility(View.GONE);
-
-        edittext.setEnabled(false);
+        binding.searchEditText.setEnabled(false);
 
         Main.getInstance()
                 .getIconRepository()
@@ -80,46 +76,29 @@ public class MainFragment extends PluginFragment {
 
                             @Override
                             public void onLoadded(List<IconModel> list) {
-                                edittext.setEnabled(true);
-                                progressBar.setVisibility(View.GONE);
+                                binding.searchEditText.setEnabled(true);
+                                binding.loadingProgressBar.setVisibility(View.GONE);
                                 if (list != null && list.isEmpty()) {
-                                    txt.setVisibility(View.VISIBLE);
+                                    binding.emptyStateText.setVisibility(View.VISIBLE);
                                 } else {
-                                    recyclerView.setVisibility(View.VISIBLE);
+                                    binding.iconsRecyclerView.setVisibility(View.VISIBLE);
                                     adapter.setOriginalList(list);
-                                    edittextLayout.setHint("Search in " + list.size() + " icon");
+                                    binding.searchInputLayout.setHint(
+                                            "Search in " + list.size() + " icon");
                                 }
                             }
 
                             @Override
                             public void onError(Throwable th) {
-                                progressBar.setVisibility(View.GONE);
-                                txt.setVisibility(View.VISIBLE);
-                                txt.setText("Error: " + th.getMessage());
+                                binding.loadingProgressBar.setVisibility(View.GONE);
+                                binding.emptyStateText.setVisibility(View.VISIBLE);
+                                binding.emptyStateText.setText("Error: " + th.getMessage());
                             }
                         });
-
-        edittext.addTextChangedListener(
-                new TextWatcher() {
-
-                    @Override
-                    public void beforeTextChanged(
-                            CharSequence arg0, int arg1, int arg2, int arg3) {
-                    }
-
-                    @Override
-                    public void onTextChanged(CharSequence text, int arg1, int arg2, int arg3) {
-                    }
-
-                    @Override
-                    public void afterTextChanged(Editable editable) {
-                        adapter.search(editable.toString());
-                    }
-                });
     }
 
-    private RecyclerView setupRecyclerView(View view) {
-        final RecyclerView recyclerView = view.findViewById(R.id.iconsRecyclerView);
+    private void setupRecyclerView() {
+        final RecyclerView recyclerView = binding.iconsRecyclerView;
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 4));
         recyclerView.setHasFixedSize(true);
         recyclerView.setItemViewCacheSize(20);
@@ -127,8 +106,6 @@ public class MainFragment extends PluginFragment {
         final RecyclerView.RecycledViewPool pool = new RecyclerView.RecycledViewPool();
         pool.setMaxRecycledViews(0, 30);
         recyclerView.setRecycledViewPool(pool);
-
-        return recyclerView;
     }
 
     private void showImportIconDialog(final IconModel model) {
@@ -137,24 +114,18 @@ public class MainFragment extends PluginFragment {
         final TextInputEditText inputName = root.findViewById(R.id.inputName);
         final TextInputEditText inputPath = root.findViewById(R.id.inputPath);
 
+        final IdeProjectService projectService = Main.getInstance().getProjectService();
+
         inputName.setText("ic_" + model.getIconName().replaceAll("-", "_"));
-        inputPath.setText("/sdcard/Download/");
+        IProject currentProject = projectService.getCurrentProject();
+
+        inputPath.setText(getDrawablePath(currentProject));
+
+        inputPath.setSingleLine(false);
+        inputPath.setMaxLines(3);
+
         inputName.addTextChangedListener(
-                new TextWatcher() {
-                    @Override
-                    public void onTextChanged(CharSequence text, int arg1, int arg2, int arg3) {
-                        Validator.validate(inputName, Arrays.asList(new IconNameRule()));
-                    }
-
-                    @Override
-                    public void beforeTextChanged(
-                            CharSequence arg0, int arg1, int arg2, int arg3) {
-                    }
-
-                    @Override
-                    public void afterTextChanged(Editable arg0) {
-                    }
-                });
+                new ValidationTextWatcher(inputName, Arrays.asList(new IconNameRule())));
 
         final MaterialAlertDialogBuilder dialog = new MaterialAlertDialogBuilder(getContext());
         dialog.setIcon(new PictureDrawable(model.getSvgIcon().renderToPicture()));
@@ -163,13 +134,79 @@ public class MainFragment extends PluginFragment {
         dialog.setPositiveButton("Import", null);
         dialog.setNegativeButton("Cancel", null);
         final AlertDialog alertDialog = dialog.show();
-        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
-            boolean isValidName = Validator.validate(inputName, Arrays.asList(new IconNameRule()));
+        alertDialog
+                .getButton(AlertDialog.BUTTON_POSITIVE)
+                .setOnClickListener(
+                        v -> {
+                            boolean isValidName =
+                                    Validator.validate(
+                                            inputName, Arrays.asList(new IconNameRule()));
 
-            if (isValidName) {
-                alertDialog.dismiss();
+                            if (isValidName) {
+                                alertDialog.dismiss();
+                            }
+                        });
+    }
+
+    private String getDrawablePath(IProject project) {
+        return new File(getResDir(project), "drawable").getAbsolutePath();
+    }
+
+    private IModule getAppModule(IProject project) {
+        if (project.getType() == ProjectType.GRADLE_PLUGIN) {
+            return new IModule() {
+                @Override
+                public String getName() {
+                    return project.getName();
+                }
+
+                @Override
+                public ModuleType getType() {
+                    return ModuleType.ANDROID_APP;
+                }
+
+                @Override
+                public File getProjectDir() {
+                    return project.getRootDir();
+                }
+
+                @Override
+                public List<SourceSet> getSourceSets() {
+                    File main = new File(getProjectDir(), "src/main");
+                    return Collections.singletonList(
+                            new SourceSet(
+                                    main.getName(),
+                                    Arrays.asList(new File(main, "java")),
+                                    Arrays.asList(new File(main, "res"))));
+                }
+            };
+        } else {
+            for (IModule module : project.getModules()) {
+                if (module.getName().equals("app")) {
+                    return module;
+                }
             }
+        }
 
-        });
+        return null;
+    }
+
+    private SourceSet getMainSourceSet(IModule module) {
+        for (SourceSet source : module.getSourceSets()) {
+            if (source.getName().equals("main")) {
+                return source;
+            }
+        }
+        return null;
+    }
+
+    private File getResDir(IProject project) {
+        SourceSet source = getMainSourceSet(getAppModule(project));
+        for (File file : source.getResourceDirs()) {
+            if (file.getName().equals("res")) {
+                return file;
+            }
+        }
+        return null;
     }
 }
