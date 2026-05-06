@@ -3,6 +3,8 @@ package dev.omar.plugin.iconsrepo.ui.adapter;
 import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +24,8 @@ import dev.omar.plugin.iconsrepo.R;
 import dev.omar.plugin.iconsrepo.models.IconModel;
 import dev.omar.plugin.iconsrepo.utils.FastSearchIndex;
 
-public class IconsAdapter extends ListAdapter<IconModel, IconViewHolder> implements Filterable {
+public class IconsAdapter extends ListAdapter<IconModel, IconViewHolder>
+        implements Filterable, TextWatcher {
 
     private List<IconModel> originalList;
     private FastSearchIndex searchIndex;
@@ -129,5 +132,16 @@ public class IconsAdapter extends ListAdapter<IconModel, IconViewHolder> impleme
     public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onDetachedFromRecyclerView(recyclerView);
         searchExecutor.shutdown();
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence text, int start, int end, int len) {}
+
+    @Override
+    public void onTextChanged(CharSequence text, int start, int end, int len) {}
+
+    @Override
+    public void afterTextChanged(Editable editable) {
+        search(editable.toString());
     }
 }
