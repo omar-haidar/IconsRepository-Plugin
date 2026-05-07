@@ -31,7 +31,6 @@
             android:id="@+id/iconNameTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceBodySmall"
             android:textColor="?attr/colorOnSurfaceVariant"
             android:gravity="center"
             android:maxLines="2"

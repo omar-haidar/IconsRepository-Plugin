@@ -40,3 +40,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "IconsRepository-Plugin"
+

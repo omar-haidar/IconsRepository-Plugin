@@ -35,7 +35,7 @@
 
         <meta-data
             android:name="plugin.min_ide_version"
-            android:value="1.0.1" />
+            android:value="26.17" />
 
         <!-- Available permissions (comma-separated): - filesystem.read : Read files from the filesystem - filesystem.write : Write files to the filesystem - network.access : Access the network - system.commands : Execute system commands - ide.settings : Access IDE settings - project.structure : Access project structure -->
         <meta-data

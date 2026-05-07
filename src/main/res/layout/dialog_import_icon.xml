@@ -14,7 +14,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="12dp"
-        app:boxStrokeColor="?attr/colorPrimary"
+        android:hint="Icon name"
+        app:endIconDrawable="@drawable/ic_category"
+        app:endIconMode="custom"
+        android:id="@+id/inputNameLayout"
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -22,8 +25,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text"
-            android:hint="Icon name"
-            android:fontFamily="monospace"
             android:textSize="14sp"
             android:singleLine="true" />
 
@@ -38,7 +39,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            app:boxStrokeColor="?attr/colorPrimary"
+            android:id="@+id/inputPathLayout"
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -47,7 +48,6 @@
                 android:layout_height="wrap_content"
                 android:inputType="text"
                 android:hint="Import path"
-                android:fontFamily="monospace"
                 android:textSize="14sp"
                 android:singleLine="true" />
 
@@ -57,6 +57,7 @@
             android:layout_height="38dp"
             android:layout_width="38dp"
             android:padding="8dp"
+            android:id="@+id/btn_paste_path"
             android:layout_marginStart="12dp"
             android:scaleType="centerInside"
             android:clickable="true"

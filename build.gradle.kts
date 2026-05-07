@@ -10,12 +10,12 @@ pluginBuilder {
 
 android {
     namespace = "dev.omar.plugin.iconsrepo"
-    compileSdk = 35
+    compileSdk = 36
     buildToolsVersion = "37.0.0"
     defaultConfig {
         applicationId = "dev.omar.plugin.iconsrepo"
         minSdk = 26
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0.0"
     }
@@ -48,7 +48,7 @@ dependencies {
     compileOnly(files("libs/plugin-api.jar"))
 
     implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("com.google.android.material:material:1.10.0")
+    implementation("com.google.android.material:material:1.12.0")
     implementation("androidx.fragment:fragment-ktx:1.8.8")
     implementation("androidx.fragment:fragment:1.8.8")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:2.3.0")

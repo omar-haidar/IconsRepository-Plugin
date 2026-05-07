@@ -2,8 +2,6 @@ package dev.omar.plugin.iconsrepo.ui.fragments;
 
 import android.graphics.drawable.PictureDrawable;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,12 +26,13 @@ import dev.omar.plugin.iconsrepo.R;
 import dev.omar.plugin.iconsrepo.data.validation.IconNameRule;
 import dev.omar.plugin.iconsrepo.data.validation.ValidationTextWatcher;
 import dev.omar.plugin.iconsrepo.data.validation.Validator;
+import dev.omar.plugin.iconsrepo.databinding.DialogImportIconBinding;
 import dev.omar.plugin.iconsrepo.databinding.FragmentMainBinding;
 import dev.omar.plugin.iconsrepo.models.IconModel;
 import dev.omar.plugin.iconsrepo.repository.IconRepository;
 import dev.omar.plugin.iconsrepo.ui.adapter.IconsAdapter;
 
-import dev.omar.plugin.iconsrepo.utils.ImageUtils;
+import dev.omar.plugin.iconsrepo.utils.Utils;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
@@ -109,28 +108,34 @@ public class MainFragment extends PluginFragment {
     }
 
     private void showImportIconDialog(final IconModel model) {
-
-        final View root = getLayoutInflater().inflate(R.layout.dialog_import_icon, null);
-        final TextInputEditText inputName = root.findViewById(R.id.inputName);
-        final TextInputEditText inputPath = root.findViewById(R.id.inputPath);
-
+        
+        
+        final DialogImportIconBinding dialogBinding = DialogImportIconBinding.inflate(getLayoutInflater());
+        
+        
         final IdeProjectService projectService = Main.getInstance().getProjectService();
 
-        inputName.setText("ic_" + model.getIconName().replaceAll("-", "_"));
+        dialogBinding.inputName.setText("ic_" + model.getIconName().replaceAll("-", "_"));
         IProject currentProject = projectService.getCurrentProject();
 
-        inputPath.setText(getDrawablePath(currentProject));
+        dialogBinding.inputPath.setText(getDrawablePath(currentProject));
 
-        inputPath.setSingleLine(false);
-        inputPath.setMaxLines(3);
+        dialogBinding.inputPath.setSingleLine(false);
+        dialogBinding.inputPath.setMaxLines(3);
 
-        inputName.addTextChangedListener(
-                new ValidationTextWatcher(inputName, Arrays.asList(new IconNameRule())));
+        dialogBinding.inputName.addTextChangedListener(
+                new ValidationTextWatcher(dialogBinding.inputName, Arrays.asList(new IconNameRule())));
+        dialogBinding.btnPastePath.setOnClickListener(v->{
+            dialogBinding.inputPath.setText(Utils.getClipboardText(getContext()));
+        });
+        dialogBinding.inputNameLayout.setEndIconActivated(true);
+        dialogBinding.inputNameLayout.setEndIconVisible(true);
+        dialogBinding.inputNameLayout.setEndIconOnClickListener(v->{});
 
         final MaterialAlertDialogBuilder dialog = new MaterialAlertDialogBuilder(getContext());
         dialog.setIcon(new PictureDrawable(model.getSvgIcon().renderToPicture()));
         dialog.setTitle("Import vector icon");
-        dialog.setView(root);
+        dialog.setView(dialogBinding.getRoot());
         dialog.setPositiveButton("Import", null);
         dialog.setNegativeButton("Cancel", null);
         final AlertDialog alertDialog = dialog.show();
@@ -140,7 +145,7 @@ public class MainFragment extends PluginFragment {
                         v -> {
                             boolean isValidName =
                                     Validator.validate(
-                                            inputName, Arrays.asList(new IconNameRule()));
+                                            dialogBinding.inputName, Arrays.asList(new IconNameRule()));
 
                             if (isValidName) {
                                 alertDialog.dismiss();
