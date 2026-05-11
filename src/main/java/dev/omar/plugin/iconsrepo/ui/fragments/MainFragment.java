@@ -126,6 +126,7 @@ public class MainFragment extends PluginFragment {
 
     private void showImportIconDialog(@NonNull final IconModel model) {
 
+        final MutableLiveData<Integer> colorPreview = new MutableLiveData<>(DynamicColorHelper.resolveDynamicColor(getContext(), DynamicColorHelper.getColorModel(com.google.android.material.R.attr.colorOnSurface)));
 
         final DialogImportIconBinding dialogBinding =
                 DialogImportIconBinding.inflate(getLayoutInflater());
@@ -135,9 +136,12 @@ public class MainFragment extends PluginFragment {
                         dialogBinding.inputName, List.of(new IconNameRule())));
         dialogBinding.inputColor.addTextChangedListener(
                 new ValidationTextWatcher(
-                        dialogBinding.inputColor, List.of(new HexColorRule())));
+                        dialogBinding.inputColor, List.of(new HexColorRule()), (text, state) -> {
+                    if (state) {
+                        colorPreview.postValue(Color.parseColor(text));
+                    }
+                }));
 
-        final MutableLiveData<Integer> colorPreview = new MutableLiveData<>(DynamicColorHelper.resolveDynamicColor(getContext(), DynamicColorHelper.getColorModel(com.google.android.material.R.attr.colorOnSurface)));
 
         colorPreview.observeForever(value -> {
             dialogBinding.iconPreview.setColorFilter(value, PorterDuff.Mode.SRC_IN);
@@ -158,6 +162,7 @@ public class MainFragment extends PluginFragment {
                     colorPreview.postValue(Color.BLACK);
                 }
             }
+
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
@@ -166,7 +171,6 @@ public class MainFragment extends PluginFragment {
 
         final IdeProjectService projectService = Main.getInstance().getProjectService();
         final IProject currentProject = projectService.getCurrentProject();
-
 
 
         final MaterialAlertDialogBuilder dialog = new MaterialAlertDialogBuilder(requireContext());
