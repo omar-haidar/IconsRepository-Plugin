@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -29,6 +30,7 @@ import com.itsaky.androidide.plugins.extensions.SourceSet;
 import com.itsaky.androidide.plugins.services.IdeProjectService;
 
 import dev.omar.plugin.iconsrepo.Main;
+import dev.omar.plugin.iconsrepo.data.validation.HexColorRule;
 import dev.omar.plugin.iconsrepo.data.validation.IconNameRule;
 import dev.omar.plugin.iconsrepo.data.validation.ValidationTextWatcher;
 import dev.omar.plugin.iconsrepo.data.validation.Validator;
@@ -39,11 +41,11 @@ import dev.omar.plugin.iconsrepo.repository.IconRepository;
 import dev.omar.plugin.iconsrepo.ui.adapter.IconsAdapter;
 
 import dev.omar.plugin.iconsrepo.utils.DynamicColorHelper;
+
 import org.dom4j.DocumentException;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -51,6 +53,7 @@ import java.io.OutputStreamWriter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class MainFragment extends PluginFragment {
 
@@ -121,55 +124,58 @@ public class MainFragment extends PluginFragment {
         recyclerView.setRecycledViewPool(pool);
     }
 
-    private void showImportIconDialog(final IconModel model) {
-        
-        final MutableLiveData<Integer> iconPreviewColor = new MutableLiveData<>(Color.BLACK);
-        
+    private void showImportIconDialog(@NonNull final IconModel model) {
+
+
         final DialogImportIconBinding dialogBinding =
                 DialogImportIconBinding.inflate(getLayoutInflater());
-                
-                iconPreviewColor.observe(getActivity(),(color)->{
-                    dialogBinding.iconPreview.setColorFilter(color,PorterDuff.Mode.SRC_IN);
-                });
-        dialogBinding.inputColorLayout.setVisibility(View.GONE);
-        dialogBinding.inputColor.setAllCaps(true);
-        List<String> colors = DynamicColorHelper.getDisplayNames();
-        colors.add(0, "Custom");
-        dialogBinding.txtListColors.setAdapter(
-                new ArrayAdapter<String>(
-                        getContext(),
-                        android.R.layout.simple_list_item_1,
-                        colors));
-        dialogBinding.txtListColors.setOnItemSelectedListener(
-                new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(
-                            AdapterView<?> _adapterView, View _view, int _position, long _id) {
-                        dialogBinding.inputColorLayout.setVisibility(
-                                _position == 0 ? View.VISIBLE : View.GONE);
-                                iconPreviewColor.postValue(Color.BLUE);
-                    }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> arg0) {}
-                });
-
-        final IdeProjectService projectService = Main.getInstance().getProjectService();
-
         dialogBinding.inputName.setText("ic_" + model.getIconName().replaceAll("-", "_"));
-        IProject currentProject = projectService.getCurrentProject();
-
         dialogBinding.inputName.addTextChangedListener(
                 new ValidationTextWatcher(
-                        dialogBinding.inputName, Arrays.asList(new IconNameRule())));
+                        dialogBinding.inputName, List.of(new IconNameRule())));
+        dialogBinding.inputColor.addTextChangedListener(
+                new ValidationTextWatcher(
+                        dialogBinding.inputColor, List.of(new HexColorRule())));
 
-        final MaterialAlertDialogBuilder dialog = new MaterialAlertDialogBuilder(getContext());
+        final MutableLiveData<Integer> colorPreview = new MutableLiveData<>(DynamicColorHelper.resolveDynamicColor(getContext(), DynamicColorHelper.getColorModel(com.google.android.material.R.attr.colorOnSurface)));
 
+        colorPreview.observeForever(value -> {
+            dialogBinding.iconPreview.setColorFilter(value, PorterDuff.Mode.SRC_IN);
+        });
+
+        dialogBinding.txtListColors.setAdapter(new ArrayAdapter<String>(requireContext(), android.R.layout.simple_list_item_1, DynamicColorHelper.getDisplayNames()));
+        dialogBinding.txtListColors.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                dialogBinding.inputColorLayout.setVisibility(position == 0 ? View.VISIBLE : View.GONE);
+                try {
+                    if (position == 0) {
+                        colorPreview.postValue(Color.parseColor(String.valueOf(dialogBinding.inputColor.getText())));
+                    } else {
+                        colorPreview.postValue(DynamicColorHelper.resolveDynamicColor(getContext(), DynamicColorHelper.getColorModel(DynamicColorHelper.getDynamicColors().get(position).getAttrId())));
+                    }
+                } catch (Exception e) {
+                    colorPreview.postValue(Color.BLACK);
+                }
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        final IdeProjectService projectService = Main.getInstance().getProjectService();
+        final IProject currentProject = projectService.getCurrentProject();
+
+
+
+        final MaterialAlertDialogBuilder dialog = new MaterialAlertDialogBuilder(requireContext());
         dialog.setTitle("Import vector icon");
         dialog.setView(dialogBinding.getRoot());
         dialog.setPositiveButton("Import", null);
         dialog.setNegativeButton("Cancel", null);
         final AlertDialog alertDialog = dialog.show();
+
         alertDialog
                 .getButton(AlertDialog.BUTTON_POSITIVE)
                 .setOnClickListener(
@@ -177,40 +183,27 @@ public class MainFragment extends PluginFragment {
                             boolean isValidName =
                                     Validator.validate(
                                             dialogBinding.inputName,
-                                            Arrays.asList(new IconNameRule()));
+                                            List.of(new IconNameRule()));
 
                             if (isValidName) {
                                 try {
-                                    String error =
-                                            parseSvgToXml(
-                                                    model.newInputStream(),
-                                                    new FileOutputStream(
-                                                            new File(
-                                                                    getDrawablePath(currentProject),
-                                                                    dialogBinding
-                                                                                    .inputName
-                                                                                    .getText()
-                                                                                    .toString()
-                                                                            + ".xml")),
-                                                    -1,
-                                                    -1);
-                                    if (error != null) {
-                                        throw new IllegalStateException(error);
-                                    }
+
                                     alertDialog.dismiss();
                                 } catch (Exception err) {
-                                    Toast.makeText(getContext(), "Error : " + err.getMessage(), 1)
+                                    Toast.makeText(getContext(), "Error : " + err.getMessage(), Toast.LENGTH_LONG)
                                             .show();
                                 }
                             }
                         });
     }
 
+    @NonNull
     private String getDrawablePath(IProject project) {
         return new File(getResDir(project), "drawable").getAbsolutePath();
     }
 
-    private IModule getAppModule(IProject project) {
+    @Nullable
+    private IModule getAppModule(@NonNull IProject project) {
         if (project.getType() == ProjectType.GRADLE_PLUGIN) {
             return new IModule() {
                 @Override
@@ -223,6 +216,7 @@ public class MainFragment extends PluginFragment {
                     return ModuleType.ANDROID_APP;
                 }
 
+                @NonNull
                 @Override
                 public File getProjectDir() {
                     return project.getRootDir();
@@ -249,7 +243,8 @@ public class MainFragment extends PluginFragment {
         return null;
     }
 
-    private SourceSet getMainSourceSet(IModule module) {
+    @Nullable
+    private SourceSet getMainSourceSet(@NonNull IModule module) {
         for (SourceSet source : module.getSourceSets()) {
             if (source.getName().equals("main")) {
                 return source;
@@ -258,6 +253,7 @@ public class MainFragment extends PluginFragment {
         return null;
     }
 
+    @Nullable
     private File getResDir(IProject project) {
         SourceSet source = getMainSourceSet(getAppModule(project));
         for (File file : source.getResourceDirs()) {
@@ -268,6 +264,7 @@ public class MainFragment extends PluginFragment {
         return null;
     }
 
+    @Nullable
     public static String parseSvgToXml(
             InputStream inputStream, OutputStream outputStream, int width, int height) {
         // Check input params.

@@ -5,6 +5,8 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.util.TypedValue;
 
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -14,7 +16,16 @@ public final class DynamicColorHelper {
     private DynamicColorHelper() {
         // Prevent instantiation
     }
-
+public static ColorReferenceModel getColorModel(int resAttr){
+    for (ColorReferenceModel model :
+            getDynamicColors()) {
+        if (resAttr == model.getAttrId()){
+            return model;
+        }
+    }
+    return getDynamicColors().get(0);
+}
+    @NonNull
     public static List<ColorReferenceModel> getDynamicColors() {
         return Arrays.asList(
                 new ColorReferenceModel(
@@ -110,26 +121,21 @@ public final class DynamicColorHelper {
     /**
      * Resolves a dynamic color attribute by its string reference (e.g., "?attr/colorPrimary").
      *
-     * @param colorString The attribute reference string.
+     * @param model The model reference of {@link ColorReferenceModel}.
      * @param context The context used to access the theme.
      * @return The resolved color integer, or {@link Color#BLACK} if resolution fails.
      */
-    public static int resolveDynamicColor(String colorString, Context context) {
-        List<ColorReferenceModel> dynamicColors = getDynamicColors();
-
-        for (ColorReferenceModel model : dynamicColors) {
-            if (model.getRef().equals(colorString)) {
-                Integer attrId = model.getAttrId();
-                if (attrId != null) {
-                    TypedValue typedValue = new TypedValue();
-                    if (context.getTheme().resolveAttribute(attrId, typedValue, true)) {
-                        if (typedValue.type >= TypedValue.TYPE_FIRST_COLOR_INT
-                                && typedValue.type <= TypedValue.TYPE_LAST_COLOR_INT) {
-                            return typedValue.data;
-                        }
+    public static int resolveDynamicColor(Context context, @NonNull ColorReferenceModel model) {
+        if(context != null){
+            Integer attrId = model.getAttrId();
+            if (attrId != null) {
+                TypedValue typedValue = new TypedValue();
+                if (context.getTheme().resolveAttribute(attrId, typedValue, true)) {
+                    if (typedValue.type >= TypedValue.TYPE_FIRST_COLOR_INT
+                            && typedValue.type <= TypedValue.TYPE_LAST_COLOR_INT) {
+                        return typedValue.data;
                     }
                 }
-                break;
             }
         }
         return Color.BLACK;
@@ -139,6 +145,7 @@ public final class DynamicColorHelper {
      * Returns a list of display names for all dynamic colors. Useful for populating a Spinner or
      * similar UI component.
      */
+    @NonNull
     public static List<String> getDisplayNames() {
         List<ColorReferenceModel> colors = getDynamicColors();
         List<String> displayNames = new ArrayList<>(colors.size());

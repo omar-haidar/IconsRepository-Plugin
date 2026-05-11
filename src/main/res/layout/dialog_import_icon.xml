@@ -14,17 +14,18 @@
     <LinearLayout
         android:orientation="horizontal"
         android:gravity="center"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="24dp"
+        android:layout_marginTop="24dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/iconPreview"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
+            android:layout_width="78dp"
+            android:layout_height="78dp"
+            android:scaleType="fitCenter"
             android:src="@drawable/ic_category"
-            app:tint="?attr/colorOnSurface"
-            android:scaleType="fitCenter" />
+            app:tint="?attr/colorOnSurface" />
     </LinearLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -32,8 +33,6 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="12dp"
         android:hint="Icon name"
-        app:endIconDrawable="@drawable/ic_category"
-        app:endIconMode="custom"
         android:id="@+id/inputNameLayout"
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
 
@@ -78,7 +77,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Hex color"
-            android:visibility="invisible"
             android:id="@+id/inputColorLayout"
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
             <com.google.android.material.textfield.TextInputEditText
@@ -91,34 +89,6 @@
                 android:singleLine="true" />
 
         </com.google.android.material.textfield.TextInputLayout>
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <com.google.android.material.button.MaterialButton
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:theme="@style/Widget.Material3.Button.OutlinedButton"
-            android:layout_weight="1" 
-            android:text="Cancel" />
-
-        <Space
-            android:layout_height="wrap_content"
-            android:layout_width="24dp"
-            />
-            
-            
-        <com.google.android.material.button.MaterialButton
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:backgroundTint="?attr/colorPrimaryContainer"
-            android:theme="@style/Widget.Material3.Button"
-            android:layout_weight="1" 
-            android:text="Import" />
-
     </LinearLayout>
 
 
