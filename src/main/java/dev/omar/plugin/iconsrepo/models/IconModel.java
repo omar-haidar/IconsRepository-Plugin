@@ -1,24 +1,45 @@
 package dev.omar.plugin.iconsrepo.models;
 
 import com.caverock.androidsvg.SVG;
+import com.caverock.androidsvg.SVGParseException;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Objects;
 
 public class IconModel {
+    
     private String iconName;
+    private byte[] data;
     private SVG svgIcon;
 
-    public IconModel(String iconName, SVG svgIcon) {
+    public IconModel(String iconName, byte[] data) {
         this.iconName = iconName;
-        this.svgIcon = svgIcon;
+        this.data = data;
     }
 
     public String getIconName() {
         return this.iconName;
     }
-
-    public void setIconName(String iconName) {
-        this.iconName = iconName;
+    
+    public SVG getSvgIcon() throws SVGParseException {
+        if(this.svgIcon == null){
+            ByteArrayInputStream in = new ByteArrayInputStream(getData());
+            this.svgIcon = SVG.getFromInputStream(in);
+            try {
+            	in.close();
+            } catch(Exception err) {
+            }
+        }
+        return this.svgIcon;
+    }
+    
+    public byte[] getData() {
+    	return this.data;
+    }
+    
+    public InputStream newInputStream() {
+    	return new ByteArrayInputStream(getData());
     }
 
     @Override
@@ -36,17 +57,9 @@ public class IconModel {
 
         IconModel other = (IconModel) obj;
 
-        if (!Objects.equals(iconName, other.iconName))
-            return false;
+        if (!Objects.equals(iconName, other.iconName)) return false;
 
-        return Objects.equals(svgIcon,other.svgIcon);
+        return Objects.equals(data, other.data);
     }
 
-    public SVG getSvgIcon() {
-        return this.svgIcon;
-    }
-
-    public void setSvgIcon(SVG svgIcon) {
-        this.svgIcon = svgIcon;
-    }
 }

@@ -54,7 +54,7 @@ public class Main extends BasePlugin {
                         true,
                         true,
                         "No description",
-                        10,
+                        10,"No tooltip",
                         () -> {
                             openFragment();
                             return null;

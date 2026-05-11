@@ -100,8 +100,7 @@ public class IconRepository {
                 // تجاهل الأيقونات الفارغة
                 if (iconData != null && iconData.length > 0) {
                     try {
-                        SVG svg = SVG.getFromInputStream(new ByteArrayInputStream(iconData));
-                        icons.add(new IconModel(iconName, svg));
+                        icons.add(new IconModel(iconName, iconData));
                     } catch (Exception err) {
 
                     }

@@ -10,6 +10,23 @@
     android:paddingTop="16dp"
     android:paddingBottom="8dp">
 
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginBottom="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/iconPreview"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:src="@drawable/ic_category"
+            app:tint="?attr/colorOnSurface"
+            android:scaleType="fitCenter" />
+    </LinearLayout>
+
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -30,40 +47,79 @@
 
     </com.google.android.material.textfield.TextInputLayout>
     <LinearLayout
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
-        android:gravity="center">
-        <com.google.android.material.textfield.TextInputLayout
+        android:layout_height="wrap_content">
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:id="@+id/inputPathLayout"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
+            android:layout_marginBottom="12dp"
+            android:orientation="vertical">
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Color"
+                android:textSize="12sp"
+                android:textColor="?android:attr/textColorSecondary"
+                android:paddingBottom="4dp" />
+
+            <Spinner
+                android:id="@+id/txt_list_colors"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_spinner" />
+
+        </LinearLayout>
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Hex color"
+            android:visibility="invisible"
+            android:id="@+id/inputColorLayout"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/inputPath"
+                android:id="@+id/inputColor"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:text="#FFFFFFFF"
                 android:inputType="text"
-                android:hint="Import path"
                 android:textSize="14sp"
                 android:singleLine="true" />
 
         </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
 
-        <ImageView
-            android:layout_height="38dp"
-            android:layout_width="38dp"
-            android:padding="8dp"
-            android:id="@+id/btn_paste_path"
-            android:layout_marginStart="12dp"
-            android:scaleType="centerInside"
-            android:clickable="true"
-            android:tint="?attr/colorOnSurface"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_paste" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_weight="1" 
+            android:text="Cancel" />
+
+        <Space
+            android:layout_height="wrap_content"
+            android:layout_width="24dp"
+            />
+            
+            
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="?attr/colorPrimaryContainer"
+            android:theme="@style/Widget.Material3.Button"
+            android:layout_weight="1" 
+            android:text="Import" />
 
     </LinearLayout>
+
+
 </LinearLayout>

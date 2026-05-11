@@ -98,18 +98,7 @@ public class IconViewHolder extends RecyclerView.ViewHolder {
                         if (rawBitmap != coloredBitmap) {
                             rawBitmap.recycle();
                         }
-                        /*
-                        android.graphics.Bitmap bitmap =
-                                ImageUtils.drawColor(
-                                        ImageUtils.drawable2Bitmap(pd),
-                                        ContextCompat.getColor(
-                                                icon.getContext(), R.color.m3_theme_Secondary));
-                        mainHandler.post(
-                                () -> {
-                                    if (currentModel == model) {
-                                        icon.setImageBitmap(bitmap);
-                                    }
-                                });*/
+                       
                     } catch (Exception err) {
                         mainHandler.post(
                                 () -> {
