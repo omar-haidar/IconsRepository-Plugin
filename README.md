@@ -1,0 +1,1 @@
+# Material Icons Repository Plugin for [Code on the Go](https://github.com/appdevforall/CodeOnTheGo/) IDE
