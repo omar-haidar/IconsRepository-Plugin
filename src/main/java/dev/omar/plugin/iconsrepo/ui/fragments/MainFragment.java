@@ -29,6 +29,17 @@ import com.itsaky.androidide.plugins.extensions.ProjectType;
 import com.itsaky.androidide.plugins.extensions.SourceSet;
 import com.itsaky.androidide.plugins.services.IdeProjectService;
 
+import org.dom4j.DocumentException;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.util.Collections;
+import java.util.List;
+
 import dev.omar.plugin.iconsrepo.Main;
 import dev.omar.plugin.iconsrepo.data.validation.HexColorRule;
 import dev.omar.plugin.iconsrepo.data.validation.IconNameRule;
@@ -39,21 +50,7 @@ import dev.omar.plugin.iconsrepo.databinding.FragmentMainBinding;
 import dev.omar.plugin.iconsrepo.models.IconModel;
 import dev.omar.plugin.iconsrepo.repository.IconRepository;
 import dev.omar.plugin.iconsrepo.ui.adapter.IconsAdapter;
-
 import dev.omar.plugin.iconsrepo.utils.DynamicColorHelper;
-
-import org.dom4j.DocumentException;
-
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
 
 public class MainFragment extends PluginFragment {
 
@@ -68,7 +65,7 @@ public class MainFragment extends PluginFragment {
 
     @Override
     @MainThread
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setupRecyclerView();
 
@@ -99,8 +96,10 @@ public class MainFragment extends PluginFragment {
                                 } else {
                                     binding.iconsRecyclerView.setVisibility(View.VISIBLE);
                                     adapter.setOriginalList(list);
-                                    binding.searchInputLayout.setHint(
-                                            "Search in " + list.size() + " icon");
+                                    if (list != null) {
+                                        binding.searchInputLayout.setHint(
+                                                "Search in " + list.size() + " icon");
+                                    }
                                 }
                             }
 
@@ -147,8 +146,8 @@ public class MainFragment extends PluginFragment {
             dialogBinding.iconPreview.setColorFilter(value, PorterDuff.Mode.SRC_IN);
         });
         List<String> colorsNames = DynamicColorHelper.getDisplayNames();
-        colorsNames.add(0,"Custom");
-        dialogBinding.txtListColors.setAdapter(new ArrayAdapter<String>(requireContext(), android.R.layout.simple_list_item_1, colorsNames));
+        colorsNames.add(0, "Custom");
+        dialogBinding.txtListColors.setAdapter(new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1, colorsNames));
         dialogBinding.txtListColors.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -157,7 +156,7 @@ public class MainFragment extends PluginFragment {
                     if (position == 0) {
                         colorPreview.postValue(Color.parseColor(String.valueOf(dialogBinding.inputColor.getText())));
                     } else {
-                        colorPreview.postValue(DynamicColorHelper.resolveDynamicColor(getContext(), DynamicColorHelper.getColorModel(DynamicColorHelper.getDynamicColors().get(Math.max(0,position-1)).getAttrId())));
+                        colorPreview.postValue(DynamicColorHelper.resolveDynamicColor(getContext(), DynamicColorHelper.getColorModel(DynamicColorHelper.getDynamicColors().get(Math.max(0, position - 1)).getAttrId())));
                     }
                 } catch (Exception e) {
                     colorPreview.postValue(Color.BLACK);
@@ -211,11 +210,13 @@ public class MainFragment extends PluginFragment {
     private IModule getAppModule(@NonNull IProject project) {
         if (project.getType() == ProjectType.GRADLE_PLUGIN) {
             return new IModule() {
+                @NonNull
                 @Override
                 public String getName() {
                     return project.getName();
                 }
 
+                @NonNull
                 @Override
                 public ModuleType getType() {
                     return ModuleType.ANDROID_APP;
@@ -227,14 +228,15 @@ public class MainFragment extends PluginFragment {
                     return project.getRootDir();
                 }
 
+                @NonNull
                 @Override
                 public List<SourceSet> getSourceSets() {
                     File main = new File(getProjectDir(), "src/main");
                     return Collections.singletonList(
                             new SourceSet(
                                     main.getName(),
-                                    Arrays.asList(new File(main, "java")),
-                                    Arrays.asList(new File(main, "res"))));
+                                    List.of(new File(main, "java")),
+                                    List.of(new File(main, "res"))));
                 }
             };
         } else {
