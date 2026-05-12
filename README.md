@@ -21,14 +21,5 @@ A plugin to easily browse, search, and use Material Design icons within the Code
 2. Search or browse for the desired icon.
 3. Click to insert the icon code directly into your project.
 
-## Contributing
 
-Contributions are welcome! Please open issues or submit pull requests for improvements or bug fixes.
-
-## License
-
-This project is licensed under the MIT License.
-
-## Support
-
-For issues or feature requests, open an issue on the [GitHub repository](https://github.com/omar-haidar/IconsRepository-Plugin/issues).
+README file maked by GitHub Copilot
