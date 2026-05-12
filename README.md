@@ -1,4 +1,4 @@
-# Material Icons Repository Plugin for [Code on the Go](https://github.com/appdevforall/CodeOnTheGo/) IDE
+# Material Icons Repository Plugin for [CodeOnTheGo](https://github.com/appdevforall/CodeOnTheGo/) IDE
 
 A plugin to easily browse, search, and use Material Design icons within the Code on the Go IDE. Simplifies icon integration for your projects.
 
@@ -22,4 +22,4 @@ A plugin to easily browse, search, and use Material Design icons within the Code
 3. Click to insert the icon code directly into your project.
 
 
-README file maked by GitHub Copilot
+`README file maked by GitHub Copilot`
