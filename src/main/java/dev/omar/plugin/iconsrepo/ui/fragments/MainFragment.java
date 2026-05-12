@@ -146,14 +146,17 @@ public class MainFragment extends PluginFragment {
             dialogBinding.iconPreview.setColorFilter(value, PorterDuff.Mode.SRC_IN);
         });
         List<String> colorsNames = DynamicColorHelper.getDisplayNames();
-        colorsNames.add(0, "Custom");
+        colorsNames.add(0, "None");
+        colorsNames.add(1, "Custom");
         dialogBinding.txtListColors.setAdapter(new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1, colorsNames));
         dialogBinding.txtListColors.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                dialogBinding.inputColorLayout.setVisibility(position == 0 ? View.VISIBLE : View.GONE);
+                dialogBinding.inputColorLayout.setVisibility((position == 1) ? View.VISIBLE : View.GONE);
                 try {
                     if (position == 0) {
+                        colorPreview.postValue(Color.BLACK);
+                    } else if (position == 1) {
                         colorPreview.postValue(Color.parseColor(String.valueOf(dialogBinding.inputColor.getText())));
                     } else {
                         colorPreview.postValue(DynamicColorHelper.resolveDynamicColor(getContext(), DynamicColorHelper.getColorModel(DynamicColorHelper.getDynamicColors().get(Math.max(0, position - 1)).getAttrId())));
@@ -191,7 +194,7 @@ public class MainFragment extends PluginFragment {
 
                             if (isValidName) {
                                 try {
-
+                                    importVectorIcon(model);
                                     alertDialog.dismiss();
                                 } catch (Exception err) {
                                     Toast.makeText(getContext(), "Error : " + err.getMessage(), Toast.LENGTH_LONG)
@@ -199,6 +202,11 @@ public class MainFragment extends PluginFragment {
                                 }
                             }
                         });
+    }
+
+    private void importVectorIcon(IconModel model) {
+
+
     }
 
     @NonNull
