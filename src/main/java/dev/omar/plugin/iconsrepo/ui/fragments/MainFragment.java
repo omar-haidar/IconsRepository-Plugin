@@ -146,8 +146,9 @@ public class MainFragment extends PluginFragment {
         colorPreview.observeForever(value -> {
             dialogBinding.iconPreview.setColorFilter(value, PorterDuff.Mode.SRC_IN);
         });
-
-        dialogBinding.txtListColors.setAdapter(new ArrayAdapter<String>(requireContext(), android.R.layout.simple_list_item_1, DynamicColorHelper.getDisplayNames()));
+        List<String> colorsNames = DynamicColorHelper.getDisplayNames();
+        colorsNames.add(0,"Custom");
+        dialogBinding.txtListColors.setAdapter(new ArrayAdapter<String>(requireContext(), android.R.layout.simple_list_item_1, colorsNames));
         dialogBinding.txtListColors.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -156,7 +157,7 @@ public class MainFragment extends PluginFragment {
                     if (position == 0) {
                         colorPreview.postValue(Color.parseColor(String.valueOf(dialogBinding.inputColor.getText())));
                     } else {
-                        colorPreview.postValue(DynamicColorHelper.resolveDynamicColor(getContext(), DynamicColorHelper.getColorModel(DynamicColorHelper.getDynamicColors().get(position).getAttrId())));
+                        colorPreview.postValue(DynamicColorHelper.resolveDynamicColor(getContext(), DynamicColorHelper.getColorModel(DynamicColorHelper.getDynamicColors().get(Math.max(0,position-1)).getAttrId())));
                     }
                 } catch (Exception e) {
                     colorPreview.postValue(Color.BLACK);
