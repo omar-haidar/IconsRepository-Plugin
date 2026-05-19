@@ -29,6 +29,11 @@ import com.itsaky.androidide.plugins.extensions.ProjectType;
 import com.itsaky.androidide.plugins.extensions.SourceSet;
 import com.itsaky.androidide.plugins.services.IdeProjectService;
 
+import dev.omar.plugin.iconsrepo.data.importer.AppPathResolver;
+import dev.omar.plugin.iconsrepo.data.importer.AssetIconSource;
+import dev.omar.plugin.iconsrepo.data.importer.ImportIconResult;
+import dev.omar.plugin.iconsrepo.data.importer.ImportParams;
+import dev.omar.plugin.iconsrepo.data.importer.SvgToVectorImporter;
 import org.dom4j.DocumentException;
 
 import java.io.BufferedWriter;
@@ -125,56 +130,13 @@ public class MainFragment extends PluginFragment {
 
     private void showImportIconDialog(@NonNull final IconModel model) {
 
-        final MutableLiveData<Integer> colorPreview = new MutableLiveData<>(DynamicColorHelper.resolveDynamicColor(getContext(), DynamicColorHelper.getColorModel(com.google.android.material.R.attr.colorOnSurface)));
-
         final DialogImportIconBinding dialogBinding =
                 DialogImportIconBinding.inflate(getLayoutInflater());
-        dialogBinding.inputName.setText("ic_" + model.getIconName().replaceAll("-", "_"));
-        dialogBinding.inputName.addTextChangedListener(
-                new ValidationTextWatcher(
-                        dialogBinding.inputName, List.of(new IconNameRule())));
-        dialogBinding.inputColor.addTextChangedListener(
-                new ValidationTextWatcher(
-                        dialogBinding.inputColor, List.of(new HexColorRule()), (text, state) -> {
-                    if (state) {
-                        colorPreview.postValue(Color.parseColor(text));
-                    }
-                }));
-
-
-        colorPreview.observeForever(value -> {
-            dialogBinding.iconPreview.setColorFilter(value, PorterDuff.Mode.SRC_IN);
-        });
-        List<String> colorsNames = DynamicColorHelper.getDisplayNames();
-        colorsNames.add(0, "None");
-        colorsNames.add(1, "Custom");
-        dialogBinding.txtListColors.setAdapter(new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1, colorsNames));
-        dialogBinding.txtListColors.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                dialogBinding.inputColorLayout.setVisibility((position == 1) ? View.VISIBLE : View.GONE);
-                try {
-                    if (position == 0) {
-                        colorPreview.postValue(Color.BLACK);
-                    } else if (position == 1) {
-                        colorPreview.postValue(Color.parseColor(String.valueOf(dialogBinding.inputColor.getText())));
-                    } else {
-                        colorPreview.postValue(DynamicColorHelper.resolveDynamicColor(getContext(), DynamicColorHelper.getColorModel(DynamicColorHelper.getDynamicColors().get(Math.max(0, position - 1)).getAttrId())));
-                    }
-                } catch (Exception e) {
-                    colorPreview.postValue(Color.BLACK);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
+        setupInputName(dialogBinding, model);
+        setupColorsList(dialogBinding);
 
         final IdeProjectService projectService = Main.getInstance().getProjectService();
         final IProject currentProject = projectService.getCurrentProject();
-
 
         final MaterialAlertDialogBuilder dialog = new MaterialAlertDialogBuilder(requireContext());
         dialog.setTitle("Import vector icon");
@@ -189,120 +151,125 @@ public class MainFragment extends PluginFragment {
                         v -> {
                             boolean isValidName =
                                     Validator.validate(
-                                            dialogBinding.inputName,
-                                            List.of(new IconNameRule()));
+                                            dialogBinding.inputName, List.of(new IconNameRule()));
+                            int selectedColorPosition =
+                                    dialogBinding.txtListColors.getSelectedItemPosition();
+                            boolean isValidColor = selectedColorPosition > 1;
 
-                            if (isValidName) {
+                            if (selectedColorPosition == 0) {
+                                isValidColor = true;
+                            } else if (selectedColorPosition == 1) {
+                                isValidColor =
+                                        Validator.validate(
+                                                dialogBinding.inputColor,
+                                                List.of(new HexColorRule()));
+                            }
+                            if (isValidName && isValidColor) {
+
                                 try {
-                                    importVectorIcon(model);
+                                    importVectorIcon(dialogBinding, currentProject, model);
                                     alertDialog.dismiss();
                                 } catch (Exception err) {
-                                    Toast.makeText(getContext(), "Error : " + err.getMessage(), Toast.LENGTH_LONG)
+                                    Toast.makeText(
+                                                    getContext(),
+                                                    "Error : " + err.getMessage(),
+                                                    Toast.LENGTH_LONG)
                                             .show();
                                 }
                             }
                         });
     }
 
-    private void importVectorIcon(IconModel model) {
+    private void importVectorIcon(
+            DialogImportIconBinding dialogBinding, IProject currentProject, IconModel model)
+            throws IllegalArgumentException {
 
-
-    }
-
-    @NonNull
-    private String getDrawablePath(IProject project) {
-        return new File(getResDir(project), "drawable").getAbsolutePath();
-    }
-
-    @Nullable
-    private IModule getAppModule(@NonNull IProject project) {
-        if (project.getType() == ProjectType.GRADLE_PLUGIN) {
-            return new IModule() {
-                @NonNull
-                @Override
-                public String getName() {
-                    return project.getName();
-                }
-
-                @NonNull
-                @Override
-                public ModuleType getType() {
-                    return ModuleType.ANDROID_APP;
-                }
-
-                @NonNull
-                @Override
-                public File getProjectDir() {
-                    return project.getRootDir();
-                }
-
-                @NonNull
-                @Override
-                public List<SourceSet> getSourceSets() {
-                    File main = new File(getProjectDir(), "src/main");
-                    return Collections.singletonList(
-                            new SourceSet(
-                                    main.getName(),
-                                    List.of(new File(main, "java")),
-                                    List.of(new File(main, "res"))));
-                }
-            };
-        } else {
-            for (IModule module : project.getModules()) {
-                if (module.getName().equals("app")) {
-                    return module;
-                }
-            }
+        ImportParams params =
+                new ImportParams(currentProject, new AssetIconSource(dialogBinding.inputName.getText().toString(),model.getData()), new AppPathResolver());
+                params.useTint(resolveColorValue(dialogBinding));
+        ImportIconResult result = new SvgToVectorImporter().importIcon(params);
+        if (!result.isSuccess()) {
+            throw new IllegalArgumentException(result.getMessage());
         }
-
-        return null;
     }
 
-    @Nullable
-    private SourceSet getMainSourceSet(@NonNull IModule module) {
-        for (SourceSet source : module.getSourceSets()) {
-            if (source.getName().equals("main")) {
-                return source;
-            }
+    private String resolveColorValue(DialogImportIconBinding dialogBinding) {
+        int selectedColorPosition = dialogBinding.txtListColors.getSelectedItemPosition();
+        if(selectedColorPosition > 1){
+            DynamicColorHelper.ColorReferenceModel model = DynamicColorHelper.getDynamicColors().get(selectedColorPosition - 2);
+            return model.getRef();
+        }else if(selectedColorPosition == 1){
+            return dialogBinding.inputColor.getText().toString();
         }
         return null;
     }
 
-    @Nullable
-    private File getResDir(IProject project) {
-        SourceSet source = getMainSourceSet(getAppModule(project));
-        for (File file : source.getResourceDirs()) {
-            if (file.getName().equals("res")) {
-                return file;
-            }
-        }
-        return null;
+    private void setupInputName(DialogImportIconBinding dialogBinding, IconModel model) {
+        dialogBinding.inputName.setText("ic_" + model.getIconName().replaceAll("-", "_"));
+        dialogBinding.inputName.addTextChangedListener(
+                new ValidationTextWatcher(dialogBinding.inputName, List.of(new IconNameRule())));
     }
 
-    @Nullable
-    public static String parseSvgToXml(
-            InputStream inputStream, OutputStream outputStream, int width, int height) {
-        // Check input params.
-        if (inputStream == null || outputStream == null) {
-            return "Invalid input params!";
-        }
+    private void setupColorsList(DialogImportIconBinding dialogBinding) {
+        final MutableLiveData<Integer> colorPreview =
+                new MutableLiveData<>(
+                        DynamicColorHelper.resolveDynamicColor(
+                                getContext(),
+                                DynamicColorHelper.getColorModel(
+                                        com.google.android.material.R.attr.colorOnSurface)));
 
-        SvgSAXReader reader = new SvgSAXReader();
-        try {
-            Svg svg = reader.read(inputStream);
-            if (width > 0) {
-                svg.w = width;
-            }
-            if (height > 0) {
-                svg.h = height;
-            }
-            Svg2VectorTemplateWriter writer = new Svg2VectorTemplateWriter(svg);
-            BufferedWriter bufferedWriter =
-                    new BufferedWriter(new OutputStreamWriter(outputStream));
-            writer.write(bufferedWriter);
-        } catch (IOException | DocumentException e) {
-            return "Exception when parsing :\n" + e.getMessage();
-        }
-        return null;
+        List<String> colorsNames = DynamicColorHelper.getDisplayNames();
+        colorsNames.add(0, "None");
+        colorsNames.add(1, "Custom");
+        dialogBinding.txtListColors.setAdapter(
+                new ArrayAdapter<>(
+                        requireContext(), android.R.layout.simple_list_item_1, colorsNames));
+        dialogBinding.txtListColors.setOnItemSelectedListener(
+                new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(
+                            AdapterView<?> parent, View view, int position, long id) {
+                        dialogBinding.inputColorLayout.setVisibility(
+                                (position == 1) ? View.VISIBLE : View.GONE);
+                        try {
+                            if (position == 0) {
+                                colorPreview.postValue(Color.BLACK);
+                            } else if (position == 1) {
+                                colorPreview.postValue(
+                                        Color.parseColor(
+                                                String.valueOf(
+                                                        dialogBinding.inputColor.getText())));
+                            } else {
+                                colorPreview.postValue(
+                                        DynamicColorHelper.resolveDynamicColor(
+                                                getContext(),
+                                                DynamicColorHelper.getColorModel(
+                                                        DynamicColorHelper.getDynamicColors()
+                                                                .get(Math.max(0, position - 2))
+                                                                .getAttrId())));
+                            }
+                        } catch (Exception e) {
+                            colorPreview.postValue(Color.BLACK);
+                        }
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {}
+                });
+
+        dialogBinding.inputColor.addTextChangedListener(
+                new ValidationTextWatcher(
+                        dialogBinding.inputColor,
+                        List.of(new HexColorRule()),
+                        (text, state) -> {
+                            if (state) {
+                                colorPreview.postValue(Color.parseColor(text));
+                            }
+                        }));
+
+        colorPreview.observeForever(
+                value -> {
+                    dialogBinding.iconPreview.setColorFilter(value, PorterDuff.Mode.SRC_IN);
+                });
     }
 }
