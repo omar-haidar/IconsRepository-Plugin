@@ -1,25 +1,42 @@
-# Material Icons Repository Plugin for [CodeOnTheGo](https://github.com/appdevforall/CodeOnTheGo/) IDE
+### **IconsRepository-Plugin**
 
-A plugin to easily browse, search, and use Material Design icons within the Code on the Go IDE. Simplifies icon integration for your projects.
+**Version:** 1.0.1
 
-## Features
+**Contributor:** [OMAR HAIDAR](https://github.com/omar-haidar)
 
-- Browse a large collection of Material Design icons.
-- Search for icons by keyword or category.
-- Easily insert selected icons into your project files.
-- Seamless integration with Code on the Go IDE.
+**License:** (e.g., MIT, Apache 2.0)
 
-## Installation
+### **Project overview**
 
-1. Clone this repository, or download the plugin files.
-2. Follow the plugin integration instructions provided by the Code on the Go IDE.
-3. Enable the plugin from your IDE's plugin manager.
+A plugin to help add drawable icons to your Android project on the `CodeOnTheGo` IDE.
 
-## Usage
+### **Requirements and dependencies**
 
-1. Open the Material Icons panel in Code on the Go.
-2. Search or browse for the desired icon.
-3. Click to insert the icon code directly into your project.
+What is needed to run this correctly?
+
+    
+*   **Code on the Go version:** (v-26.20)
 
 
-`README file maked by GitHub Copilot`
+### **Installation**
+
+Install using the Plugin Manager in `CodeOnTheGo`.
+
+### **Usage**
+
+- Tap the icon on SideBar.
+
+- Select and customize the icon you want to add to your project.
+    
+
+### **Known Issues and constraints**
+
+*   The add-on does not install on `CodeOnTheGo` versions lower than `V26.20`.
+    
+    
+### **Support & Feedback**
+
+
+*   **Github:** [Issues](https://github.com/omar-haidar/IconsRepository-Plugin/issues)
+    
+*   **Contact:** [Telegram](https://t.me/OMAR_HAIDAR_0)
