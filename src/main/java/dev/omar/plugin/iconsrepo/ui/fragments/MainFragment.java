@@ -1,7 +1,9 @@
 package dev.omar.plugin.iconsrepo.ui.fragments;
 
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.PictureDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,6 +36,7 @@ import dev.omar.plugin.iconsrepo.data.importer.AssetIconSource;
 import dev.omar.plugin.iconsrepo.data.importer.ImportIconResult;
 import dev.omar.plugin.iconsrepo.data.importer.ImportParams;
 import dev.omar.plugin.iconsrepo.data.importer.SvgToVectorImporter;
+import dev.omar.plugin.iconsrepo.utils.ImageUtils;
 import org.dom4j.DocumentException;
 
 import java.io.BufferedWriter;
@@ -134,6 +137,19 @@ public class MainFragment extends PluginFragment {
                 DialogImportIconBinding.inflate(getLayoutInflater());
         setupInputName(dialogBinding, model);
         setupColorsList(dialogBinding);
+        try {
+            int defaultColor = DynamicColorHelper.resolveDynamicColor(
+                                getContext(),
+                                DynamicColorHelper.getColorModel(
+                                        com.google.android.material.R.attr.colorOnSurface));
+            PictureDrawable pd = new PictureDrawable(model.getSvgIcon().renderToPicture());
+            Bitmap rawBitmap = ImageUtils.drawable2Bitmap(pd);
+                        Bitmap coloredBitmap =
+                                ImageUtils.drawColor(rawBitmap,defaultColor);
+            dialogBinding.iconPreview.setImageBitmap(coloredBitmap);
+        } catch (Exception err) {
+            
+        }
 
         final IdeProjectService projectService = Main.getInstance().getProjectService();
         final IProject currentProject = projectService.getCurrentProject();
@@ -185,8 +201,12 @@ public class MainFragment extends PluginFragment {
             throws IllegalArgumentException {
 
         ImportParams params =
-                new ImportParams(currentProject, new AssetIconSource(dialogBinding.inputName.getText().toString(),model.getData()), new AppPathResolver());
-                params.useTint(resolveColorValue(dialogBinding));
+                new ImportParams(
+                        currentProject,
+                        new AssetIconSource(
+                                dialogBinding.inputName.getText().toString(), model.getData()),
+                        new AppPathResolver());
+        params.useTint(resolveColorValue(dialogBinding));
         ImportIconResult result = new SvgToVectorImporter().importIcon(params);
         if (!result.isSuccess()) {
             throw new IllegalArgumentException(result.getMessage());
@@ -195,10 +215,11 @@ public class MainFragment extends PluginFragment {
 
     private String resolveColorValue(DialogImportIconBinding dialogBinding) {
         int selectedColorPosition = dialogBinding.txtListColors.getSelectedItemPosition();
-        if(selectedColorPosition > 1){
-            DynamicColorHelper.ColorReferenceModel model = DynamicColorHelper.getDynamicColors().get(selectedColorPosition - 2);
+        if (selectedColorPosition > 1) {
+            DynamicColorHelper.ColorReferenceModel model =
+                    DynamicColorHelper.getDynamicColors().get(selectedColorPosition - 2);
             return model.getRef();
-        }else if(selectedColorPosition == 1){
+        } else if (selectedColorPosition == 1) {
             return dialogBinding.inputColor.getText().toString();
         }
         return null;
