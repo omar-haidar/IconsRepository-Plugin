@@ -1,5 +1,6 @@
 package dev.omar.plugin.iconsrepo.ui.fragments;
 
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -96,7 +97,7 @@ public class MainFragment extends PluginFragment {
                         new IconRepository.LoadIconsCallback() {
 
                             @Override
-                            public void onLoadded(List<IconModel> list) {
+                            public void onLoaded(List<IconModel> list) {
                                 binding.searchEditText.setEnabled(true);
                                 binding.loadingProgressBar.setVisibility(View.GONE);
                                 if (list != null && list.isEmpty()) {
@@ -111,6 +112,7 @@ public class MainFragment extends PluginFragment {
                                 }
                             }
 
+                            @SuppressLint("SetTextI18n")
                             @Override
                             public void onError(Throwable th) {
                                 binding.loadingProgressBar.setVisibility(View.GONE);
@@ -131,6 +133,7 @@ public class MainFragment extends PluginFragment {
         recyclerView.setRecycledViewPool(pool);
     }
 
+    @SuppressLint("InlinedApi")
     private void showImportIconDialog(@NonNull final IconModel model) {
 
         final DialogImportIconBinding dialogBinding =

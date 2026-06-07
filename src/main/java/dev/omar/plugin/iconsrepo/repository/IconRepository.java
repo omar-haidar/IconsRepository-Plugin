@@ -9,10 +9,9 @@ import android.os.Looper;
 import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
 
-import com.caverock.androidsvg.SVG;
 import com.itsaky.androidide.plugins.base.PluginFragmentHelper;
 import dev.omar.plugin.iconsrepo.Main;
-import java.io.ByteArrayInputStream;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,9 +28,8 @@ import dev.omar.plugin.iconsrepo.models.IconModel;
 public class IconRepository {
 
     private final Context context;
-    private final String zipFileName = "material_icon.zip";
-    private ExecutorService executor = Executors.newSingleThreadExecutor();
-    private List<IconModel> iconsList;
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final List<IconModel> iconsList;
 
     public IconRepository(Context context) {
         if (context == null) {
@@ -39,13 +37,13 @@ public class IconRepository {
         } else {
             this.context = context;
         }
-        iconsList = new LinkedList<IconModel>();
+        iconsList = new LinkedList<>();
     }
 
     public interface LoadIconsCallback {
-        public void onLoadded(List<IconModel> list);
+        void onLoaded(List<IconModel> list);
 
-        public void onError(Throwable th);
+        void onError(Throwable th);
     }
 
     public void loadAllIconsAsync(final LoadIconsCallback callback) {
@@ -55,14 +53,10 @@ public class IconRepository {
                     try {
                         final List<IconModel> list = loadAllIcons();
                         runOnUiThread(
-                                () -> {
-                                    callback.onLoadded(list);
-                                });
+                                () -> callback.onLoaded(list));
                     } catch (Exception err) {
                         runOnUiThread(
-                                () -> {
-                                    callback.onError(err);
-                                });
+                                () -> callback.onError(err));
                     }
                 });
     }
@@ -80,8 +74,9 @@ public class IconRepository {
 
         AssetManager assets = context.getAssets();
 
+        String zipFileName = "material_icon.zip";
         try (InputStream inputStream = assets.open(zipFileName);
-                ZipInputStream zipIn = new ZipInputStream(inputStream)) {
+             ZipInputStream zipIn = new ZipInputStream(inputStream)) {
 
             ZipEntry entry;
             while ((entry = zipIn.getNextEntry()) != null) {
@@ -98,10 +93,10 @@ public class IconRepository {
                 byte[] iconData = readEntryBytes(zipIn);
 
                 // تجاهل الأيقونات الفارغة
-                if (iconData != null && iconData.length > 0) {
+                if (iconData.length > 0) {
                     try {
                         icons.add(new IconModel(iconName, iconData));
-                    } catch (Exception err) {
+                    } catch (Exception ignored) {
 
                     }
                 }
