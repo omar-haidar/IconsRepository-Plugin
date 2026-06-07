@@ -9,8 +9,8 @@ import java.util.Objects;
 
 public class IconModel {
     
-    private String iconName;
-    private byte[] data;
+    private final String iconName;
+    private final byte[] data;
     private SVG svgIcon;
 
     public IconModel(String iconName, byte[] data) {
@@ -28,7 +28,7 @@ public class IconModel {
             this.svgIcon = SVG.getFromInputStream(in);
             try {
             	in.close();
-            } catch(Exception err) {
+            } catch(Exception ignored) {
             }
         }
         return this.svgIcon;
@@ -59,7 +59,7 @@ public class IconModel {
 
         if (!Objects.equals(iconName, other.iconName)) return false;
 
-        return Objects.equals(data, other.data);
+        return Arrays.equals(data, other.data);
     }
 
 }

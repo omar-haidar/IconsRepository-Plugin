@@ -15,21 +15,13 @@ import android.widget.Toast;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.github.megatronking.svg.generator.svg.SvgSAXReader;
-import com.github.megatronking.svg.generator.svg.model.Svg;
-import com.github.megatronking.svg.generator.writer.impl.Svg2VectorTemplateWriter;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.itsaky.androidide.plugins.extensions.IModule;
 import com.itsaky.androidide.plugins.extensions.IProject;
-import com.itsaky.androidide.plugins.extensions.ModuleType;
-import com.itsaky.androidide.plugins.extensions.ProjectType;
-import com.itsaky.androidide.plugins.extensions.SourceSet;
 import com.itsaky.androidide.plugins.services.IdeProjectService;
 
 import dev.omar.plugin.iconsrepo.data.importer.AppPathResolver;
@@ -38,15 +30,7 @@ import dev.omar.plugin.iconsrepo.data.importer.ImportIconResult;
 import dev.omar.plugin.iconsrepo.data.importer.ImportParams;
 import dev.omar.plugin.iconsrepo.data.importer.SvgToVectorImporter;
 import dev.omar.plugin.iconsrepo.utils.ImageUtils;
-import org.dom4j.DocumentException;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.util.Collections;
 import java.util.List;
 
 import dev.omar.plugin.iconsrepo.Main;
@@ -212,7 +196,7 @@ public class MainFragment extends PluginFragment {
         params.useTint(resolveColorValue(dialogBinding));
         ImportIconResult result = new SvgToVectorImporter().importIcon(params);
         if (!result.isSuccess()) {
-            throw new IllegalArgumentException(result.getMessage());
+            throw new IllegalArgumentException(result.message());
         }
     }
 

@@ -1,6 +1,8 @@
 package dev.omar.plugin.iconsrepo;
 
 
+import androidx.annotation.NonNull;
+
 import com.itsaky.androidide.plugins.PluginContext;
 import com.itsaky.androidide.plugins.extensions.EditorTabItem;
 import com.itsaky.androidide.plugins.extensions.NavigationItem;
@@ -9,8 +11,6 @@ import com.itsaky.androidide.plugins.services.IdeEditorTabService;
 import dev.omar.plugin.iconsrepo.repository.IconRepository;
 import dev.omar.plugin.iconsrepo.ui.fragments.MainFragment;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.util.Collections;
 import java.util.List;
 
@@ -26,6 +26,7 @@ public class Main extends BasePlugin {
         return instance;
     }
 
+    @NonNull
     @Override
     public List<EditorTabItem> getMainEditorTabs() {
         return Collections.singletonList(
@@ -33,9 +34,7 @@ public class Main extends BasePlugin {
                         PLUGIN_ID,
                         "Icons Repository",
                         R.drawable.ic_category,
-                        () -> {
-                            return new MainFragment();
-                        },
+                        MainFragment::new,
                         true,
                         false,
                         10,
@@ -44,6 +43,7 @@ public class Main extends BasePlugin {
                         "No description"));
     }
 
+    @NonNull
     @Override
     public List<NavigationItem> getSideMenuItems() {
         return Collections.singletonList(

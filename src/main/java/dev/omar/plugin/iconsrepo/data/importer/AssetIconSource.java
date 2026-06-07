@@ -8,8 +8,8 @@ import java.io.IOException;
 
 public class AssetIconSource implements IconSource {
 
-    private String name;
-    private byte[] data;
+    private final String name;
+    private final byte[] data;
 
     public AssetIconSource(String name, byte[] data) {
         this.name = name;

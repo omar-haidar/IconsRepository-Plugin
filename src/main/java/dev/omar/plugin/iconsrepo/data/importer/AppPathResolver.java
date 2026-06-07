@@ -11,6 +11,7 @@ import java.io.File;
 import dev.omar.plugin.iconsrepo.data.importer.ImportPathResolver;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class AppPathResolver implements ImportPathResolver {
 
@@ -84,7 +85,8 @@ public class AppPathResolver implements ImportPathResolver {
 
     @Nullable
     private File getResDir(IProject project) {
-        SourceSet source = getMainSourceSet(getAppModule(project));
+        SourceSet source = getMainSourceSet(Objects.requireNonNull(getAppModule(project)));
+        assert source != null;
         for (File file : source.getResourceDirs()) {
             if (file.getName().equals("res")) {
                 return file;

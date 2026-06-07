@@ -1,7 +1,6 @@
 package dev.omar.plugin.iconsrepo.utils;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.util.TypedValue;
 
@@ -179,6 +178,7 @@ public static ColorReferenceModel getColorModel(int resAttr){
             return displayName;
         }
 
+        @NonNull
         @Override
         public String toString() {
             return "ColorReferenceModel{"

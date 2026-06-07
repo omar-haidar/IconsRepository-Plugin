@@ -1,5 +1,7 @@
 package dev.omar.plugin.iconsrepo.data.importer;
 
+import android.os.Build;
+
 import org.xmlpull.v1.XmlPullParserFactory;
 import org.xmlpull.v1.XmlSerializer;
 
@@ -7,6 +9,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,7 +44,7 @@ public class SvgToVectorImporter implements IconImporter {
                 return ImportIconResult.error("File already exists: " + outputFile.getName());
             }
 
-            Path parentPath = outputFile.getParentFile().toPath();
+            Path parentPath = Objects.requireNonNull(outputFile.getParentFile()).toPath();
             Files.createDirectories(parentPath);
             Files.write(outputFile.toPath(), rawXml.getBytes(StandardCharsets.UTF_8));
 
@@ -53,10 +56,28 @@ public class SvgToVectorImporter implements IconImporter {
 
     private String extractPathData(InputStream svgStream) throws IOException {
         try (svgStream) {
-            String content = new String(svgStream.readAllBytes(), StandardCharsets.UTF_8);
+            String content = null;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                content = new String(svgStream.readAllBytes(), StandardCharsets.UTF_8);
+            }else{
+                content = new String(readAllBytes(svgStream), StandardCharsets.UTF_8);
+            }
             Matcher matcher = PATH_D_PATTERN.matcher(content);
             return matcher.find() ? matcher.group(1) : null;
         }
+    }
+
+    private byte[] readAllBytes(InputStream in) throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        int len;
+        byte[] buff = new byte[1024];
+        while ((len = in.read(buff))!=-1) {
+            out.write(buff,0,len);
+        }
+        out.flush();
+        out.close();
+        return out.toByteArray();
+
     }
 
     /** يبني نص XML خام (بدون تنسيق) متوافق مع Android VectorDrawable. */
