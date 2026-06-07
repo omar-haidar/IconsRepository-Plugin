@@ -2,6 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -23,6 +24,7 @@
             android:id="@+id/iconPreview"
             android:layout_width="78dp"
             android:layout_height="78dp"
+            android:contentDescription="@string/preview_icon"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_category"
             app:tint="?attr/colorOnSurface" />
@@ -32,7 +34,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="12dp"
-        android:hint="Icon name"
+        android:hint="@string/icon_name"
         android:id="@+id/inputNameLayout"
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
 
@@ -51,7 +53,7 @@
         android:layout_height="wrap_content">
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_weight="1"
             android:layout_marginBottom="12dp"
             android:orientation="vertical">
@@ -59,7 +61,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Color"
+                android:text="@string/color"
                 android:textSize="12sp"
                 android:textColor="?android:attr/textColorSecondary"
                 android:paddingBottom="4dp" />
@@ -76,7 +78,7 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Hex color"
+            android:hint="@string/hex_color"
             android:visibility="gone"
             android:id="@+id/inputColorLayout"
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
@@ -87,7 +89,8 @@
                 android:text="#FFFFFFFF"
                 android:inputType="text"
                 android:textSize="14sp"
-                android:singleLine="true" />
+                android:singleLine="true"
+                tools:ignore="HardcodedText" />
 
         </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>
