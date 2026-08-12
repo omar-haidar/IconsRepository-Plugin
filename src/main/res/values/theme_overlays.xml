@@ -1,5 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <style name="PluginTheme.MediumContrast" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="PluginTheme.MediumContrast" parent="Theme.Material3Expressive.DayNight.NoActionBar">
         <item name="colorPrimary">@color/m3_theme_PrimaryMediumContrast</item>
         <item name="colorOnPrimary">@color/m3_theme_OnPrimaryMediumContrast</item>
         <item name="colorPrimaryContainer">@color/m3_theme_PrimaryContainerMediumContrast</item>
@@ -47,7 +47,7 @@
         <item name="colorSurfaceContainerHigh">@color/m3_theme_SurfaceContainerHighMediumContrast</item>
         <item name="colorSurfaceContainerHighest">@color/m3_theme_SurfaceContainerHighestMediumContrast</item>
     </style>
-    <style name="PluginTheme.HighContrast" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="PluginTheme.HighContrast" parent="Theme.Material3Expressive.DayNight.NoActionBar">
         <item name="colorPrimary">@color/m3_theme_PrimaryHighContrast</item>
         <item name="colorOnPrimary">@color/m3_theme_OnPrimaryHighContrast</item>
         <item name="colorPrimaryContainer">@color/m3_theme_PrimaryContainerHighContrast</item>

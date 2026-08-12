@@ -13,6 +13,7 @@ import dev.omar.plugin.iconsrepo.ui.fragments.MainFragment;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 public class Main extends BasePlugin {
 
@@ -96,4 +97,6 @@ public class Main extends BasePlugin {
         }
         return iconRepository;
     }
+
+
 }

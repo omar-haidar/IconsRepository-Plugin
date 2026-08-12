@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <application
-        android:label="IconsRepository-Plugin"
+        android:label="IconsRepository"
         android:theme="@style/PluginTheme">
 
         <!-- Plugin metadata -->
@@ -12,8 +12,8 @@
 
         <meta-data
             android:name="plugin.name"
-            android:value="IconsRepository-Plugin" />
-        
+            android:value="IconsRepository" />
+
         <meta-data
             android:name="plugin.icon_day"
             android:value="assets/icon_day.png" />
@@ -23,11 +23,11 @@
             android:value="assets/icon_night.png" />
         <meta-data
             android:name="plugin.version"
-            android:value="1.0.1" />
+            android:value="1.1.0" />
 
         <meta-data
             android:name="plugin.description"
-            android:value="A Code on the Go plugin" />
+            android:value="A plugin to help add drawable icons to your Android project on the `CodeOnTheGo` IDE." />
 
         <meta-data
             android:name="plugin.author"
@@ -35,7 +35,7 @@
 
         <meta-data
             android:name="plugin.min_ide_version"
-            android:value="26.17" />
+            android:value="26.33" />
 
         <!-- Available permissions (comma-separated): - filesystem.read : Read files from the filesystem - filesystem.write : Write files to the filesystem - network.access : Access the network - system.commands : Execute system commands - ide.settings : Access IDE settings - project.structure : Access project structure -->
         <meta-data

@@ -112,9 +112,9 @@ public class MainFragment extends PluginFragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setItemViewCacheSize(20);
 
-        final RecyclerView.RecycledViewPool pool = new RecyclerView.RecycledViewPool();
-        pool.setMaxRecycledViews(0, 30);
-        recyclerView.setRecycledViewPool(pool);
+        //final RecyclerView.RecycledViewPool pool = new RecyclerView.RecycledViewPool();
+        //pool.setMaxRecycledViews(0, 30);
+        //recyclerView.setRecycledViewPool(pool);
     }
 
     @SuppressLint("InlinedApi")

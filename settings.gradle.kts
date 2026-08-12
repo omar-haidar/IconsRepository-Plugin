@@ -1,22 +1,12 @@
-pluginManagement {
-    repositories {
-        //maven { url = uri("https://maven.aliyun.com/repository/google") }
-        //maven { url = uri("https://maven.aliyun.com/repository/public") }
-       // maven { url = uri("https://maven.aliyun.com/repository/gradle-plugin") }
-        google()
-        mavenCentral()
-        gradlePluginPortal()
-    }
-}
 
 buildscript {
     repositories {
-       // maven { url = uri("https://maven.aliyun.com/repository/google") }
-       // maven { url = uri("https://maven.aliyun.com/repository/public") }
-       // maven { url = uri("https://maven.aliyun.com/repository/gradle-plugin") }
         google()
         mavenLocal()
         mavenCentral()
+        maven { url = uri("https://maven.aliyun.com/repository/google") }
+        maven { url = uri("https://maven.aliyun.com/repository/public") }
+        maven { url = uri("https://maven.aliyun.com/repository/gradle-plugin") }
     }
     dependencies {
         classpath(files("libs/plugin-api.jar"))
@@ -39,5 +29,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "IconsRepository-Plugin"
+rootProject.name = "IconsRepository"
 
