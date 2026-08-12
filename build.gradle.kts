@@ -5,7 +5,7 @@ plugins {
 }
 
 pluginBuilder {
-    pluginName = "IconsRepository-Plugin"
+    pluginName = "IconsRepository"
 }
 
 android {
@@ -38,6 +38,7 @@ android {
     
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
     
 
@@ -56,6 +57,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib:2.3.0")
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("com.caverock:androidsvg:1.4")
+    implementation("androidx.recyclerview:recyclerview:1.4.0")
 }
 tasks.wrapper {
     gradleVersion = "8.14.3"
