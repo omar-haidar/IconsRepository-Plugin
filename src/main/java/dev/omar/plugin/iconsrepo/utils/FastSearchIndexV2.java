@@ -4,8 +4,7 @@ import java.util.*;
 
 public class FastSearchIndexV2 {
     
-    // ========== 1. IntList: تخزين primitives بدلاً من Integer ==========
-    // توفر ~4 أضعاف في الذاكرة وتتجنب Boxing/Unboxing
+        
     private static final class IntList {
         int[] data = new int[4];
         int size;
@@ -18,7 +17,7 @@ public class FastSearchIndexV2 {
         }
     }
     
-    // ========== البيانات الرئيسية ==========
+    
     private final List<String> allNames;
     private final String[] normalized;           // الأسماء مُجهّزة مسبقاً
     private final Map<String, IntList> prefixMap;  // بادئات الكلمات
@@ -40,7 +39,6 @@ public class FastSearchIndexV2 {
         buildIndex();
     }
     
-    // ========== 2. بناء الفهرس المُحسّن ==========
     private void buildIndex() {
         for (int i = 0; i < allNames.size(); i++) {
             // تخزين النسخة المُحسّنة مرة واحدة فقط
@@ -175,7 +173,6 @@ public class FastSearchIndexV2 {
         return result.size > 0 ? result : null;
     }
     
-    // ========== أدوات مساعدة ==========
     private List<Integer> getAllIndices() {
         List<Integer> all = new ArrayList<>(allNames.size());
         for (int i = 0; i < allNames.size(); i++) all.add(i);
