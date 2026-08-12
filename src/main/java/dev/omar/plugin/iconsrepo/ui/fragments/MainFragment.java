@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.itsaky.androidide.plugins.base.PluginFragmentHelper;
 import com.itsaky.androidide.plugins.extensions.IProject;
 import com.itsaky.androidide.plugins.services.IdeProjectService;
 
@@ -222,7 +223,7 @@ public class MainFragment extends PluginFragment {
         final MutableLiveData<Integer> colorPreview =
                 new MutableLiveData<>(
                         DynamicColorHelper.resolveDynamicColor(
-                                getContext(),
+                               getContext() ,
                                 DynamicColorHelper.getColorModel(
                                         com.google.android.material.R.attr.colorOnSurface)));
 

@@ -15,15 +15,16 @@ public final class DynamicColorHelper {
     private DynamicColorHelper() {
         // Prevent instantiation
     }
-public static ColorReferenceModel getColorModel(int resAttr){
-    for (ColorReferenceModel model :
-            getDynamicColors()) {
-        if (resAttr == model.getAttrId()){
-            return model;
+
+    public static ColorReferenceModel getColorModel(int resAttr) {
+        for (ColorReferenceModel model : getDynamicColors()) {
+            if (resAttr == model.getAttrId()) {
+                return model;
+            }
         }
+        return getDynamicColors().get(0);
     }
-    return getDynamicColors().get(0);
-}
+
     @NonNull
     public static List<ColorReferenceModel> getDynamicColors() {
         return Arrays.asList(
@@ -125,7 +126,7 @@ public static ColorReferenceModel getColorModel(int resAttr){
      * @return The resolved color integer, or {@link Color#BLACK} if resolution fails.
      */
     public static int resolveDynamicColor(Context context, @NonNull ColorReferenceModel model) {
-        if(context != null){
+        if (context != null) {
             Integer attrId = model.getAttrId();
             if (attrId != null) {
                 TypedValue typedValue = new TypedValue();

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:orientation="vertical"
     android:layout_height="match_parent"
     android:background="?attr/colorSurface"
     android:padding="16dp">
@@ -35,46 +36,41 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/iconsRecyclerView"
-        android:layout_width="match_parent"
+    <FrameLayout
         android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:fadingEdgeLength="24dp"
-        app:layout_constraintTop_toBottomOf="@id/searchInputLayout"
-        app:layout_constraintStart_toStartOf="@id/searchInputLayout"
-        app:layout_constraintEnd_toEndOf="@id/searchInputLayout"
-        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-        tools:itemCount="8"
-        app:spanCount="4"
-        android:requiresFadingEdge="vertical"
-        tools:listitem="@layout/item_icon" />
+            android:layout_width="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/iconsRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:fadingEdgeLength="24dp"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            tools:itemCount="8"
+            app:spanCount="4"
+            android:requiresFadingEdge="vertical"
+            tools:listitem="@layout/item_icon" />
 
 
-    <com.google.android.material.progressindicator.CircularProgressIndicator
-        android:id="@+id/loadingProgressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:indeterminate="true"
-        app:layout_constraintTop_toTopOf="@id/searchInputLayout"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:visibility="visible" />
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/loadingProgressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminate="true"
+            android:visibility="visible" />
 
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/emptyStateText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/no_icons_found"
-        android:textAppearance="?attr/textAppearanceBodyLarge"
-        android:textColor="?attr/colorOnSurfaceVariant"
-        app:layout_constraintTop_toTopOf="@id/searchInputLayout"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:visibility="gone" />
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/emptyStateText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/no_icons_found"
+            android:textAppearance="?attr/textAppearanceBodyLarge"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:visibility="gone" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>
+
+</LinearLayout>
