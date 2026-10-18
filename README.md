@@ -1,6 +1,12 @@
 ### **IconsRepository-Plugin**
+<div align='center'>
+  
+[![stability-alpha](https://img.shields.io/badge/stability-alpha-f4d03f.svg)](https://github.com/mkenney/software-guides/blob/master/STABILITY-BADGES.md#alpha)
+  <h2>A plugin to help add drawable icons to your Android project on the `CodeOnTheGo` IDE.</h2>
 
-**Version:** 1.0.1
+</div>
+
+**Version:** 1.0.0
 
 **Contributor:** [OMAR HAIDAR](https://github.com/omar-haidar)
 
@@ -18,7 +24,6 @@ A plugin to help add drawable icons to your Android project on the `CodeOnTheGo`
 ### **Requirements and dependencies**
 
 What is needed to run this correctly?
-
     
 *   **Code on the Go version:** (v-26.44)
 
