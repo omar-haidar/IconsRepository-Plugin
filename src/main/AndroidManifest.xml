@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <application
         android:label="IconsRepository"
-        android:theme="@style/PluginTheme">
+        android:theme="@style/PluginTheme"
+        tools:ignore="MissingApplicationIcon">
 
         <!-- Plugin metadata -->
         <meta-data
@@ -35,7 +37,7 @@
 
         <meta-data
             android:name="plugin.min_ide_version"
-            android:value="26.33" />
+            android:value="26.42" />
 
         <!-- Available permissions (comma-separated): - filesystem.read : Read files from the filesystem - filesystem.write : Write files to the filesystem - network.access : Access the network - system.commands : Execute system commands - ide.settings : Access IDE settings - project.structure : Access project structure -->
         <meta-data

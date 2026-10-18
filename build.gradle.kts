@@ -9,12 +9,12 @@ pluginBuilder {
 
 android {
     namespace = "dev.omar.plugin.iconsrepo"
-    compileSdk = 35
+    compileSdk = 36
     
     defaultConfig {
         applicationId = "dev.omar.plugin.iconsrepo"
         minSdk = 26
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0.0"
     }
@@ -29,10 +29,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    kotlinOptions {
-        jvmTarget = "17"
     }
     
     buildFeatures {
@@ -81,11 +77,6 @@ tasks.matching {
     enabled = false
 }
 
-kotlin {
-    compilerOptions {
-        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.fromTarget("17"))
-    }
-}
 configurations.all {
     resolutionStrategy {
         force("com.google.guava:guava:31.1-android")
