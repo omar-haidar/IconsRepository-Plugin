@@ -6,6 +6,11 @@
 
 **License:** (e.g., MIT, Apache 2.0)
 
+### **Screenshots**
+
+<img style="width: 25%; height: 80%; padding-right: 10px" src=".github/resources/screenshot/screenshot_1.jpg?raw=true"><img style="width: 25%; height: 80%" src=".github/resources/screenshot/screenshot_2.jpg?raw=true"><img style="width: 25%; height: 80%" src=".github/resources/screenshot/screenshot_3.jpg?raw=true"><img style="width: 25%; height: 80%" src=".github/resources/screenshot/screenshot_4.jpg?raw=true">
+
+
 ### **Project overview**
 
 A plugin to help add drawable icons to your Android project on the `CodeOnTheGo` IDE.
