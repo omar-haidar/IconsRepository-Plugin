@@ -23,11 +23,11 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Build with Gradle
-      run: ./gradlew :assemblePlugin
+      run: ./gradlew assemblePlugin
 
-    - name: Prepare APK
+    - name: Prepare Plugin
       if: github.event_name == 'push'
-      run: cp app/build/plugin/IconsRepository.cgp IconsRepository.cgp
+      run: cp build/plugin/IconsRepository.cgp IconsRepository.cgp
 
     - name: Publish to the single "latest" release
       if: github.event_name == 'push'
