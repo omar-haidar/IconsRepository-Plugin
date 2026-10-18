@@ -1,6 +1,5 @@
 plugins {
     id("com.android.application")
-    id("org.jetbrains.kotlin.android")
     id("com.itsaky.androidide.plugins.build")
 }
 
@@ -11,7 +10,7 @@ pluginBuilder {
 android {
     namespace = "dev.omar.plugin.iconsrepo"
     compileSdk = 35
-    buildToolsVersion = "37.0.0"
+    
     defaultConfig {
         applicationId = "dev.omar.plugin.iconsrepo"
         minSdk = 26
@@ -40,7 +39,18 @@ android {
         viewBinding = true
         buildConfig = true
     }
-    
+    packaging {
+        resources {
+            excludes += setOf(
+                "META-INF/versions/9/OSGI-INF/MANIFEST.MF",
+                "META-INF/DEPENDENCIES",
+                "META-INF/LICENSE",
+                "META-INF/LICENSE.txt",
+                "META-INF/NOTICE",
+                "META-INF/NOTICE.txt"
+            )
+        }
+    }
 
 
 }
@@ -60,7 +70,7 @@ dependencies {
     implementation("androidx.recyclerview:recyclerview:1.4.0")
 }
 tasks.wrapper {
-    gradleVersion = "8.14.3"
+    gradleVersion = "9.6.1"
     distributionType = Wrapper.DistributionType.BIN
 }
 
@@ -69,6 +79,12 @@ tasks.matching {
     it.name.contains("checkReleaseAarMetadata")
 }.configureEach {
     enabled = false
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.fromTarget("17"))
+    }
 }
 configurations.all {
     resolutionStrategy {
