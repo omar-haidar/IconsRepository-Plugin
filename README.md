@@ -25,7 +25,7 @@ A plugin to help add drawable icons to your Android project on the `CodeOnTheGo`
 
 What is needed to run this correctly?
     
-*   **Code on the Go version:** (v-26.44)
+*   **Code on the Go version:** (v-26.42)
 
 
 ### **Installation**
@@ -41,7 +41,7 @@ Install using the Plugin Manager in `CodeOnTheGo`.
 
 ### **Known Issues and constraints**
 
-*   The add-on does not install on `CodeOnTheGo` versions lower than `V26.44`.
+*   The add-on does not install on `CodeOnTheGo` versions lower than `V26.42`.
     
     
 ### **Support & Feedback**
