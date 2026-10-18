@@ -41,5 +41,4 @@ jobs:
           --title "Latest build" \
           --notes "Automated signed release build from commit ${GITHUB_SHA::7}" \
           --target "$GITHUB_SHA" \
-          --latest \
-          --clobber
+          --latest
