@@ -24,3 +24,19 @@ jobs:
       run: chmod +x gradlew
     - name: Build with Gradle
       run: ./gradlew :assemblePlugin
+
+    - name: Prepare APK
+      if: github.event_name == 'push'
+      run: cp app/build/plugin/IconsRepository.cgp IconsRepository.cgp
+
+    - name: Publish to the single "latest" release
+      if: github.event_name == 'push'
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        gh release delete latest --cleanup-tag --yes || true
+        gh release create latest IconsRepository.cgp \
+          --title "Latest build" \
+          --notes "Automated signed release build from commit ${GITHUB_SHA::7}" \
+          --target "$GITHUB_SHA" \
+          --latest
