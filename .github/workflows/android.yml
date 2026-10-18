@@ -10,6 +10,8 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
     - uses: actions/checkout@v4
@@ -39,4 +41,5 @@ jobs:
           --title "Latest build" \
           --notes "Automated signed release build from commit ${GITHUB_SHA::7}" \
           --target "$GITHUB_SHA" \
-          --latest
+          --latest \
+          --clobber
