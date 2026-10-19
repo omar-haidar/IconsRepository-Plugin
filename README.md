@@ -47,15 +47,15 @@
     <tr>
       <td align="center" width="25%">
         <img src=".github/resources/screenshot/screenshot_1.jpg" width="100%" alt="Browse & Search"/>
-        <br /><b>Browse & Search</b>
+        <br /><b>Browse</b>
       </td>
       <td align="center" width="25%">
         <img src=".github/resources/screenshot/screenshot_2.jpg" width="100%" alt="Customize"/>
-        <br /><b>Customize</b>
+        <br /><b>Search</b>
       </td>
       <td align="center" width="25%">
         <img src=".github/resources/screenshot/screenshot_3.jpg" width="100%" alt="Import to Project"/>
-        <br /><b>Import to Project</b>
+        <br /><b>Customize</b>
       </td>
       <td align="center" width="25%">
         <img src=".github/resources/screenshot/screenshot_4.jpg" width="100%" alt="Settings & Theme"/>
