@@ -31,11 +31,23 @@ public class IconImportUseCase {
             @NonNull IconModel iconModel,
             @NonNull String name,
             @Nullable String colorTint) {
+        return execute(project, iconModel, name, colorTint, AppPathResolver.TARGET_ALL_MODULES);
+    }
 
+    @NonNull
+    public ImportIconResult execute(
+            @Nullable IProject project,
+            @NonNull IconModel iconModel,
+            @NonNull String name,
+            @Nullable String colorTint,
+            @Nullable String targetModuleName) {
+
+        AppPathResolver pathResolver = new AppPathResolver(targetModuleName);
         ImportParams params = new ImportParams(
                 project,
                 new AssetIconSource(name, iconModel.getData()),
-                new AppPathResolver()
+                pathResolver,
+                targetModuleName
         );
         params.useTint(colorTint);
 

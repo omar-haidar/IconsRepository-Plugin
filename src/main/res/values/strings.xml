@@ -9,4 +9,6 @@
     <string name="icon_name">Icon name</string>
     <string name="color">Color</string>
     <string name="hex_color">Hex color</string>
+    <string name="target_module">Target module</string>
+    <string name="all_modules">All modules</string>
 </resources>

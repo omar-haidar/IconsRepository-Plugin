@@ -16,18 +16,21 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.itsaky.androidide.plugins.extensions.IModule;
 import com.itsaky.androidide.plugins.extensions.IProject;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import dev.omar.plugin.iconsrepo.data.importer.AppPathResolver;
 import dev.omar.plugin.iconsrepo.data.importer.ImportIconResult;
+import dev.omar.plugin.iconsrepo.data.models.IconModel;
 import dev.omar.plugin.iconsrepo.data.validation.HexColorRule;
 import dev.omar.plugin.iconsrepo.data.validation.IconNameRule;
 import dev.omar.plugin.iconsrepo.data.validation.ValidationTextWatcher;
 import dev.omar.plugin.iconsrepo.data.validation.Validator;
 import dev.omar.plugin.iconsrepo.databinding.DialogImportIconBinding;
 import dev.omar.plugin.iconsrepo.domain.IconImportUseCase;
-import dev.omar.plugin.iconsrepo.data.models.IconModel;
 import dev.omar.plugin.iconsrepo.utils.DynamicColorHelper;
 import dev.omar.plugin.iconsrepo.utils.ImageUtils;
 
@@ -36,6 +39,7 @@ public class IconImportDialogManager {
     private final Context context;
     private final LayoutInflater inflater;
     private final IconImportUseCase importUseCase;
+    private final List<String> moduleTargetNames = new ArrayList<>();
 
     public IconImportDialogManager(@NonNull Context context, @NonNull LayoutInflater inflater) {
         this(context, inflater, new IconImportUseCase());
@@ -57,6 +61,7 @@ public class IconImportDialogManager {
         final DialogImportIconBinding binding = DialogImportIconBinding.inflate(inflater);
 
         setupInputName(binding, model);
+        setupModulesList(binding, currentProject);
         setupColorsList(binding);
         setupIconPreview(binding, model);
 
@@ -80,6 +85,29 @@ public class IconImportDialogManager {
         binding.inputName.setText(defaultName);
         binding.inputName.addTextChangedListener(
                 new ValidationTextWatcher(binding.inputName, List.of(new IconNameRule())));
+    }
+
+    private void setupModulesList(@NonNull DialogImportIconBinding binding, @Nullable IProject currentProject) {
+        moduleTargetNames.clear();
+        List<IModule> availableModules = AppPathResolver.getAvailableModules(currentProject);
+
+        List<String> displayNames = new ArrayList<>();
+        String allModulesTitle = "All modules (" + availableModules.size() + ")";
+        displayNames.add(allModulesTitle);
+        moduleTargetNames.add(AppPathResolver.TARGET_ALL_MODULES);
+
+        for (IModule module : availableModules) {
+            String name = module.getName();
+            String formattedName = name.startsWith(":") ? name : ":" + name;
+            displayNames.add(formattedName);
+            moduleTargetNames.add(name);
+        }
+
+        binding.txtListModules.setAdapter(
+                new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, displayNames));
+
+        // Default to "All modules" (position 0)
+        binding.txtListModules.setSelection(0);
     }
 
     private void setupIconPreview(@NonNull DialogImportIconBinding binding, @NonNull IconModel model) {
@@ -178,7 +206,12 @@ public class IconImportDialogManager {
             String name = binding.inputName.getText() != null ? binding.inputName.getText().toString() : "";
             String colorTint = resolveColorValue(binding, selectedColorPosition);
 
-            ImportIconResult result = importUseCase.execute(currentProject, model, name, colorTint);
+            int selectedModulePos = binding.txtListModules.getSelectedItemPosition();
+            String targetModule = (selectedModulePos >= 0 && selectedModulePos < moduleTargetNames.size())
+                    ? moduleTargetNames.get(selectedModulePos)
+                    : AppPathResolver.TARGET_ALL_MODULES;
+
+            ImportIconResult result = importUseCase.execute(currentProject, model, name, colorTint, targetModule);
             if (!result.isSuccess()) {
                 Toast.makeText(context, "Error: " + result.message(), Toast.LENGTH_LONG).show();
                 return false;

@@ -2,96 +2,155 @@ package dev.omar.plugin.iconsrepo.data.importer;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
 import com.itsaky.androidide.plugins.extensions.IModule;
-import com.itsaky.androidide.plugins.extensions.ModuleType;
-import com.itsaky.androidide.plugins.extensions.SourceSet;
-import com.itsaky.androidide.plugins.extensions.ProjectType;
 import com.itsaky.androidide.plugins.extensions.IProject;
+import com.itsaky.androidide.plugins.extensions.ModuleType;
+import com.itsaky.androidide.plugins.extensions.ProjectType;
+import com.itsaky.androidide.plugins.extensions.SourceSet;
+
 import java.io.File;
-import dev.omar.plugin.iconsrepo.data.importer.ImportPathResolver;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 public class AppPathResolver implements ImportPathResolver {
 
+    public static final String TARGET_ALL_MODULES = "ALL";
+
+    private final String targetModuleName;
+
+    public AppPathResolver() {
+        this(null);
+    }
+
+    public AppPathResolver(@Nullable String targetModuleName) {
+        this.targetModuleName = targetModuleName;
+    }
+
     @Override
     public File getDrawableDirectory(IProject project) {
-        File file = new File(getDrawablePath(project));
-        if(!file.exists() && file.canWrite()){
-            file.mkdirs();
+        List<File> dirs = getDrawableDirectories(project);
+        if (!dirs.isEmpty()) {
+            return dirs.get(0);
         }
-        return file;
+        File fallback = new File(project.getRootDir(), "app/src/main/res/drawable");
+        if (!fallback.exists() && fallback.getParentFile() != null) {
+            fallback.mkdirs();
+        }
+        return fallback;
+    }
+
+    @Override
+    public List<File> getDrawableDirectories(IProject project) {
+        if (project == null) {
+            return Collections.emptyList();
+        }
+
+        List<IModule> availableModules = getAvailableModules(project);
+        List<File> targetDirectories = new ArrayList<>();
+
+        boolean isAllModules = targetModuleName == null 
+                || TARGET_ALL_MODULES.equalsIgnoreCase(targetModuleName)
+                || targetModuleName.startsWith("All modules")
+                || targetModuleName.startsWith("جميع");
+
+        for (IModule module : availableModules) {
+            if (isAllModules || matchesModuleName(module, targetModuleName)) {
+                File drawableDir = getDrawableDirForModule(module);
+                if (drawableDir != null) {
+                    if (!drawableDir.exists() && drawableDir.getParentFile() != null && drawableDir.getParentFile().canWrite()) {
+                        drawableDir.mkdirs();
+                    }
+                    targetDirectories.add(drawableDir);
+                }
+            }
+        }
+
+        if (targetDirectories.isEmpty()) {
+            File fallback = new File(project.getRootDir(), "app/src/main/res/drawable");
+            if (!fallback.exists() && fallback.getParentFile() != null && fallback.getParentFile().canWrite()) {
+                fallback.mkdirs();
+            }
+            targetDirectories.add(fallback);
+        }
+
+        return targetDirectories;
     }
 
     @NonNull
-    private String getDrawablePath(IProject project) {
-        return new File(getResDir(project), "drawable").getAbsolutePath();
-    }
-
-    @Nullable
-    private IModule getAppModule(@NonNull IProject project) {
+    public static List<IModule> getAvailableModules(@Nullable IProject project) {
+        if (project == null) {
+            return Collections.emptyList();
+        }
         if (project.getType() == ProjectType.GRADLE_PLUGIN) {
-            return new IModule() {
-                @NonNull
-                @Override
-                public String getName() {
-                    return project.getName();
-                }
-
-                @NonNull
-                @Override
-                public ModuleType getType() {
-                    return ModuleType.ANDROID_APP;
-                }
-
-                @NonNull
-                @Override
-                public File getProjectDir() {
-                    return project.getRootDir();
-                }
-
-                @NonNull
-                @Override
-                public List<SourceSet> getSourceSets() {
-                    File main = new File(getProjectDir(), "src/main");
-                    return Collections.singletonList(
-                            new SourceSet(
-                                    main.getName(),
-                                    List.of(new File(main, "java")),
-                                    List.of(new File(main, "res"))));
-                }
-            };
-        } else {
-            for (IModule module : project.getModules()) {
-                if (module.getName().equals("app")) {
-                    return module;
-                }
-            }
+            return Collections.singletonList(createSyntheticModule(project));
         }
+        List<IModule> modules = project.getModules();
+        if (modules != null && !modules.isEmpty()) {
+            return modules;
+        }
+        return Collections.singletonList(createSyntheticModule(project));
+    }
 
-        return null;
+    private static boolean matchesModuleName(@NonNull IModule module, @NonNull String target) {
+        String name = module.getName();
+        if (name.equalsIgnoreCase(target)) {
+            return true;
+        }
+        String formattedModule = name.startsWith(":") ? name : ":" + name;
+        String formattedTarget = target.startsWith(":") ? target : ":" + target;
+        return formattedModule.equalsIgnoreCase(formattedTarget);
     }
 
     @Nullable
-    private SourceSet getMainSourceSet(@NonNull IModule module) {
-        for (SourceSet source : module.getSourceSets()) {
-            if (source.getName().equals("main")) {
-                return source;
+    public static File getDrawableDirForModule(@NonNull IModule module) {
+        if (module.getSourceSets() != null) {
+            for (SourceSet source : module.getSourceSets()) {
+                if ("main".equalsIgnoreCase(source.getName())) {
+                    if (source.getResourceDirs() != null) {
+                        for (File resDir : source.getResourceDirs()) {
+                            if (resDir != null && ("res".equalsIgnoreCase(resDir.getName()) || resDir.getPath().endsWith("res"))) {
+                                return new File(resDir, "drawable");
+                            }
+                        }
+                    }
+                }
             }
         }
-        return null;
+        return new File(module.getProjectDir(), "src/main/res/drawable");
     }
 
-    @Nullable
-    private File getResDir(IProject project) {
-        SourceSet source = getMainSourceSet(Objects.requireNonNull(getAppModule(project)));
-        assert source != null;
-        for (File file : source.getResourceDirs()) {
-            if (file.getName().equals("res")) {
-                return file;
+    private static IModule createSyntheticModule(@NonNull IProject project) {
+        return new IModule() {
+            @NonNull
+            @Override
+            public String getName() {
+                return project.getName() != null ? project.getName() : "app";
             }
-        }
-        return null;
+
+            @NonNull
+            @Override
+            public ModuleType getType() {
+                return ModuleType.ANDROID_APP;
+            }
+
+            @NonNull
+            @Override
+            public File getProjectDir() {
+                return project.getRootDir();
+            }
+
+            @NonNull
+            @Override
+            public List<SourceSet> getSourceSets() {
+                File main = new File(getProjectDir(), "src/main");
+                return Collections.singletonList(
+                        new SourceSet(
+                                main.getName(),
+                                List.of(new File(main, "java")),
+                                List.of(new File(main, "res"))));
+            }
+        };
     }
 }
