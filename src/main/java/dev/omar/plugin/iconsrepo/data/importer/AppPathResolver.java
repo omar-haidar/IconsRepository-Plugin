@@ -5,8 +5,6 @@ import androidx.annotation.Nullable;
 
 import com.itsaky.androidide.plugins.extensions.IModule;
 import com.itsaky.androidide.plugins.extensions.IProject;
-import com.itsaky.androidide.plugins.extensions.ModuleType;
-import com.itsaky.androidide.plugins.extensions.ProjectType;
 import com.itsaky.androidide.plugins.extensions.SourceSet;
 
 import java.io.File;
@@ -80,27 +78,11 @@ public class AppPathResolver implements ImportPathResolver {
 
     @NonNull
     public static List<IModule> getAvailableModules(@Nullable IProject project) {
-        if (project == null) {
-            return Collections.emptyList();
-        }
-        if (project.getType() == ProjectType.GRADLE_PLUGIN) {
-            return Collections.singletonList(createSyntheticModule(project));
-        }
-        List<IModule> modules = project.getModules();
-        if (modules != null && !modules.isEmpty()) {
-            return modules;
-        }
-        return Collections.singletonList(createSyntheticModule(project));
+        return ModuleDiscoveryEngine.discoverModules(project);
     }
 
     private static boolean matchesModuleName(@NonNull IModule module, @NonNull String target) {
-        String name = module.getName();
-        if (name.equalsIgnoreCase(target)) {
-            return true;
-        }
-        String formattedModule = name.startsWith(":") ? name : ":" + name;
-        String formattedTarget = target.startsWith(":") ? target : ":" + target;
-        return formattedModule.equalsIgnoreCase(formattedTarget);
+        return ModuleDiscoveryEngine.matchesModuleName(module, target);
     }
 
     @Nullable
@@ -118,39 +100,7 @@ public class AppPathResolver implements ImportPathResolver {
                 }
             }
         }
-        return new File(module.getProjectDir(), "src/main/res/drawable");
-    }
-
-    private static IModule createSyntheticModule(@NonNull IProject project) {
-        return new IModule() {
-            @NonNull
-            @Override
-            public String getName() {
-                return project.getName() != null ? project.getName() : "app";
-            }
-
-            @NonNull
-            @Override
-            public ModuleType getType() {
-                return ModuleType.ANDROID_APP;
-            }
-
-            @NonNull
-            @Override
-            public File getProjectDir() {
-                return project.getRootDir();
-            }
-
-            @NonNull
-            @Override
-            public List<SourceSet> getSourceSets() {
-                File main = new File(getProjectDir(), "src/main");
-                return Collections.singletonList(
-                        new SourceSet(
-                                main.getName(),
-                                List.of(new File(main, "java")),
-                                List.of(new File(main, "res"))));
-            }
-        };
+        File mainResDir = new File(module.getProjectDir(), "src/main/res");
+        return new File(mainResDir, "drawable");
     }
 }
