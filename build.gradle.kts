@@ -5,6 +5,7 @@ plugins {
 
 pluginBuilder {
     pluginName = "IconsRepository"
+    pluginVersion = "2.0.3"
 }
 
 android {
