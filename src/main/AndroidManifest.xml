@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <application
-        android:label="${pluginName}"
+        android:label="IconsRepository"
         android:theme="@style/PluginTheme"
         tools:ignore="MissingApplicationIcon">
 
@@ -14,7 +14,7 @@
 
         <meta-data
             android:name="plugin.name"
-            android:value="${pluginName}" />
+            android:value="IconsRepository" />
 
         <meta-data
             android:name="plugin.icon_day"
@@ -25,7 +25,7 @@
             android:value="assets/icon_night.png" />
         <meta-data
             android:name="plugin.version"
-            android:value="${pluginVersion}" />
+            android:value="2.0.3" />
 
         <meta-data
             android:name="plugin.description"
