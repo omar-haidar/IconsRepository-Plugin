@@ -59,7 +59,6 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.androidx.fragment)
-    implementation(libs.kotlin.stdlib)
     implementation(libs.google.gson)
     implementation(libs.androidsvg)
     implementation(libs.androidx.recyclerview)
