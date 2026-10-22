@@ -39,13 +39,20 @@ public class ModuleDiscoveryEngine {
             return Collections.emptyList();
         }
 
+        String rootModuleName = ":" + getProjectName(project, rootDir);
+
         try {
             List<IModule> ideModules = project.getModules();
             if (ideModules != null) {
                 for (IModule module : ideModules) {
                     if (module != null && module.getName() != null) {
-                        String normName = normalizeModuleName(module.getName());
-                        moduleMap.put(normName, module);
+                        String name = module.getName();
+                        if ("app".equalsIgnoreCase(name) && !new File(rootDir, "app").exists() && isValidAndroidModuleDir(rootDir)) {
+                            moduleMap.put(rootModuleName, createSyntheticModule(rootModuleName, rootDir));
+                        } else {
+                            String normName = normalizeModuleName(name);
+                            moduleMap.put(normName, module);
+                        }
                     }
                 }
             }
@@ -71,15 +78,39 @@ public class ModuleDiscoveryEngine {
             }
         }
 
+        if (isValidAndroidModuleDir(rootDir) && !moduleMap.containsKey(rootModuleName)) {
+            boolean hasSubmodules = false;
+            for (String key : moduleMap.keySet()) {
+                if (!key.equalsIgnoreCase(rootModuleName)) {
+                    hasSubmodules = true;
+                    break;
+                }
+            }
+            if (!hasSubmodules) {
+                moduleMap.put(rootModuleName, createSyntheticModule(rootModuleName, rootDir));
+            }
+        }
+
         if (moduleMap.isEmpty()) {
             File defaultAppDir = new File(rootDir, "app");
-            File targetDir = defaultAppDir.exists() ? defaultAppDir : rootDir;
-            moduleMap.put(":app", createSyntheticModule(":app", targetDir));
+            if (defaultAppDir.exists()) {
+                moduleMap.put(":app", createSyntheticModule(":app", defaultAppDir));
+            } else {
+                moduleMap.put(rootModuleName, createSyntheticModule(rootModuleName, rootDir));
+            }
         }
 
         List<IModule> result = new ArrayList<>(moduleMap.values());
         result.sort(Comparator.comparing(m -> normalizeModuleName(m.getName())));
         return result;
+    }
+
+    @NonNull
+    public static String getProjectName(@Nullable IProject project, @NonNull File rootDir) {
+        if (project != null && project.getName() != null && !project.getName().trim().isEmpty() && !"app".equalsIgnoreCase(project.getName())) {
+            return project.getName().trim();
+        }
+        return rootDir.getName();
     }
 
     @NonNull
