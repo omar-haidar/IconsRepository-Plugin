@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.textview.MaterialTextView;
 
 import dev.omar.plugin.iconsrepo.R;
-import dev.omar.plugin.iconsrepo.models.IconModel;
+import dev.omar.plugin.iconsrepo.data.models.IconModel;
 import dev.omar.plugin.iconsrepo.utils.ImageUtils;
 
 import java.util.concurrent.ExecutorService;

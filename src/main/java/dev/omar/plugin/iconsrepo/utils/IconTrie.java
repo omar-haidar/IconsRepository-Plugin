@@ -5,7 +5,7 @@ import androidx.collection.ArrayMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import dev.omar.plugin.iconsrepo.models.IconModel;
+import dev.omar.plugin.iconsrepo.data.models.IconModel;
 
 public class IconTrie {
     

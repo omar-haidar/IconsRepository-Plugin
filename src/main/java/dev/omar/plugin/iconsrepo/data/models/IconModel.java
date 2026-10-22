@@ -1,4 +1,4 @@
-package dev.omar.plugin.iconsrepo.models;
+package dev.omar.plugin.iconsrepo.data.models;
 
 import com.caverock.androidsvg.SVG;
 import com.caverock.androidsvg.SVGParseException;
@@ -23,30 +23,30 @@ public class IconModel {
     }
     
     public SVG getSvgIcon() throws SVGParseException {
-        if(this.svgIcon == null){
+        if (this.svgIcon == null) {
             ByteArrayInputStream in = new ByteArrayInputStream(getData());
             this.svgIcon = SVG.getFromInputStream(in);
             try {
-            	in.close();
-            } catch(Exception ignored) {
+                in.close();
+            } catch (Exception ignored) {
             }
         }
         return this.svgIcon;
     }
     
     public byte[] getData() {
-    	return this.data;
+        return this.data;
     }
     
     public InputStream newInputStream() {
-    	return new ByteArrayInputStream(getData());
+        return new ByteArrayInputStream(getData());
     }
 
     @Override
     public int hashCode() {
         int result = 17;
         result = 31 * result + (iconName != null ? iconName.hashCode() : 0);
-        result = 31 * result + svgIcon.hashCode();
+        result = 31 * result + (svgIcon != null ? svgIcon.hashCode() : 0);
         return result;
     }
 
@@ -61,5 +61,4 @@ public class IconModel {
 
         return Arrays.equals(data, other.data);
     }
-
 }

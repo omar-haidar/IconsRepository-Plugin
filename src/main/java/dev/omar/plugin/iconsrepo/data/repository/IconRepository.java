@@ -1,8 +1,7 @@
-package dev.omar.plugin.iconsrepo.repository;
+package dev.omar.plugin.iconsrepo.data.repository;
 
 import android.content.Context;
 import android.content.res.AssetManager;
-
 import android.os.Handler;
 import android.os.Looper;
 
@@ -10,7 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
 
 import com.itsaky.androidide.plugins.base.PluginFragmentHelper;
-import dev.omar.plugin.iconsrepo.Main;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -23,7 +21,8 @@ import java.util.concurrent.Executors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import dev.omar.plugin.iconsrepo.models.IconModel;
+import dev.omar.plugin.iconsrepo.Main;
+import dev.omar.plugin.iconsrepo.data.models.IconModel;
 
 public class IconRepository {
 
@@ -80,19 +79,15 @@ public class IconRepository {
 
             ZipEntry entry;
             while ((entry = zipIn.getNextEntry()) != null) {
-                // نتجاهل المجلدات والملفات التي ليست بصيغة SVG
                 if (entry.isDirectory() || !entry.getName().toLowerCase().endsWith(".svg")) {
                     continue;
                 }
 
-                // استخراج اسم الأيقونة بدون مسار وبدون امتداد
-                String fullName = entry.getName(); // مثال: svg/home.svg
+                String fullName = entry.getName();
                 String iconName = extractIconName(fullName);
 
-                // قراءة بيانات SVG إلى مصفوفة بايتات
                 byte[] iconData = readEntryBytes(zipIn);
 
-                // تجاهل الأيقونات الفارغة
                 if (iconData.length > 0) {
                     try {
                         icons.add(new IconModel(iconName, iconData));

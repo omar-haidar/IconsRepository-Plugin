@@ -8,7 +8,7 @@ import com.itsaky.androidide.plugins.extensions.EditorTabItem;
 import com.itsaky.androidide.plugins.extensions.NavigationItem;
 import com.itsaky.androidide.plugins.services.IdeEditorTabService;
 
-import dev.omar.plugin.iconsrepo.repository.IconRepository;
+import dev.omar.plugin.iconsrepo.data.repository.IconRepository;
 import dev.omar.plugin.iconsrepo.ui.fragments.MainFragment;
 
 import java.util.Collections;

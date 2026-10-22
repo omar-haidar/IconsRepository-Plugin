@@ -26,6 +26,17 @@ public final class DynamicColorHelper {
     }
 
     @NonNull
+    public static ColorReferenceModel getDefaultColorModel() {
+        List<ColorReferenceModel> colors = getDynamicColors();
+        for (ColorReferenceModel model : colors) {
+            if ("colorOnSurface".equals(model.getDisplayName())) {
+                return model;
+            }
+        }
+        return colors.get(0);
+    }
+
+    @NonNull
     public static List<ColorReferenceModel> getDynamicColors() {
         return Arrays.asList(
                 new ColorReferenceModel(

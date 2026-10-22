@@ -22,7 +22,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import dev.omar.plugin.iconsrepo.R;
-import dev.omar.plugin.iconsrepo.models.IconModel;
+import dev.omar.plugin.iconsrepo.data.models.IconModel;
 import dev.omar.plugin.iconsrepo.utils.FastSearchIndex;
 
 public class IconsAdapter extends ListAdapter<IconModel, IconViewHolder>

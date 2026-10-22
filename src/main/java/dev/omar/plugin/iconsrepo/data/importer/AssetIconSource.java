@@ -1,7 +1,7 @@
 package dev.omar.plugin.iconsrepo.data.importer;
 
 import dev.omar.plugin.iconsrepo.data.importer.IconSource;
-import dev.omar.plugin.iconsrepo.models.IconModel;
+import dev.omar.plugin.iconsrepo.data.models.IconModel;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.IOException;
