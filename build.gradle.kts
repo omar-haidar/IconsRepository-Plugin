@@ -47,24 +47,23 @@ android {
             )
         }
     }
-
-
 }
 
 dependencies {
     compileOnly(files("libs/plugin-api.jar"))
     
-    implementation("com.github.megatronking:svg-generator:1.3.2")
-    implementation("com.github.megatronking:svg-support:1.3.2")
-    implementation("androidx.appcompat:appcompat:1.7.1")
-    implementation("com.google.android.material:material:1.14.0")
-    implementation("androidx.fragment:fragment-ktx:1.8.8")
-    implementation("androidx.fragment:fragment:1.8.8")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:2.3.0")
-    implementation("com.google.code.gson:gson:2.10.1")
-    implementation("com.caverock:androidsvg:1.4")
-    implementation("androidx.recyclerview:recyclerview:1.4.0")
+    implementation(libs.svg.generator)
+    implementation(libs.svg.support)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.material)
+    implementation(libs.androidx.fragment.ktx)
+    implementation(libs.androidx.fragment)
+    implementation(libs.kotlin.stdlib)
+    implementation(libs.google.gson)
+    implementation(libs.androidsvg)
+    implementation(libs.androidx.recyclerview)
 }
+
 tasks.wrapper {
     gradleVersion = "9.6.1"
     distributionType = Wrapper.DistributionType.BIN
@@ -79,6 +78,6 @@ tasks.matching {
 
 configurations.all {
     resolutionStrategy {
-        force("com.google.guava:guava:31.1-android")
+        force(libs.guava.get().toString())
     }
 }
